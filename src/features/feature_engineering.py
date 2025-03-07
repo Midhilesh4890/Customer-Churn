@@ -29,17 +29,22 @@ def create_tenure_groups(df: pd.DataFrame, column: str = "tenure") -> pd.DataFra
 
     # Define tenure groups
     bins = [0, 12, 24, 36, 48, 60, 72]
-    labels = ['0-12 months', '13-24 months', '25-36 months',
-              '37-48 months', '49-60 months', '61-72 months']
+    labels = [
+        "0-12 months",
+        "13-24 months",
+        "25-36 months",
+        "37-48 months",
+        "49-60 months",
+        "61-72 months",
+    ]
 
     # Create tenure group column
-    result_df['tenure_group'] = pd.cut(
+    result_df["tenure_group"] = pd.cut(
         result_df[column], bins=bins, labels=labels, right=True
     )
 
     # Convert to one-hot encoding
-    tenure_dummies = pd.get_dummies(
-        result_df['tenure_group'], prefix='tenure_group')
+    tenure_dummies = pd.get_dummies(result_df["tenure_group"], prefix="tenure_group")
     result_df = pd.concat([result_df, tenure_dummies], axis=1)
 
     logger.info(f"Created {len(labels)} tenure group features")
@@ -47,7 +52,9 @@ def create_tenure_groups(df: pd.DataFrame, column: str = "tenure") -> pd.DataFra
     return result_df
 
 
-def create_service_count(df: pd.DataFrame, service_columns: List[str] = None) -> pd.DataFrame:
+def create_service_count(
+    df: pd.DataFrame, service_columns: List[str] = None
+) -> pd.DataFrame:
     """
     Create a feature that counts the number of services a customer has.
 
@@ -65,9 +72,15 @@ def create_service_count(df: pd.DataFrame, service_columns: List[str] = None) ->
 
     if service_columns is None:
         service_columns = [
-            "PhoneService", "MultipleLines", "InternetService",
-            "OnlineSecurity", "OnlineBackup", "DeviceProtection",
-            "TechSupport", "StreamingTV", "StreamingMovies"
+            "PhoneService",
+            "MultipleLines",
+            "InternetService",
+            "OnlineSecurity",
+            "OnlineBackup",
+            "DeviceProtection",
+            "TechSupport",
+            "StreamingTV",
+            "StreamingMovies",
         ]
 
     # Filter to include only columns that exist in the dataframe
@@ -77,7 +90,9 @@ def create_service_count(df: pd.DataFrame, service_columns: List[str] = None) ->
     result_df["service_count"] = 0
 
     for col in service_columns:
-        if pd.api.types.is_categorical_dtype(result_df[col]) or pd.api.types.is_object_dtype(result_df[col]):
+        if pd.api.types.is_categorical_dtype(
+            result_df[col]
+        ) or pd.api.types.is_object_dtype(result_df[col]):
             # For categorical columns, count "Yes" values
             result_df["service_count"] += (result_df[col] == "Yes").astype(int)
         else:
@@ -88,13 +103,12 @@ def create_service_count(df: pd.DataFrame, service_columns: List[str] = None) ->
     result_df["service_count_group"] = pd.cut(
         result_df["service_count"],
         bins=[-1, 0, 2, 4, 6, 10],
-        labels=["None", "Basic", "Medium", "High", "Complete"]
+        labels=["None", "Basic", "Medium", "High", "Complete"],
     )
 
     # Convert to one-hot encoding
     service_count_dummies = pd.get_dummies(
-        result_df["service_count_group"],
-        prefix="service_count"
+        result_df["service_count_group"], prefix="service_count"
     )
     result_df = pd.concat([result_df, service_count_dummies], axis=1)
 
@@ -124,17 +138,21 @@ def create_interaction_features(df: pd.DataFrame) -> pd.DataFrame:
 
     if tenure_exists and monthly_charges_exists:
         # Create tenure to MonthlyCharges ratio
-        result_df["tenure_to_monthly_ratio"] = result_df["tenure"] / \
-            (result_df["MonthlyCharges"] + 1)
+        result_df["tenure_to_monthly_ratio"] = result_df["tenure"] / (
+            result_df["MonthlyCharges"] + 1
+        )
         logger.info("Created tenure to monthly charges ratio feature")
 
     # Create contract-tenure interaction
     contract_cols = [
-        col for col in result_df.columns if "Contract" in col or "contract" in col]
+        col for col in result_df.columns if "Contract" in col or "contract" in col
+    ]
 
     if tenure_exists and contract_cols:
         for col in contract_cols:
-            if pd.api.types.is_categorical_dtype(result_df[col]) or pd.api.types.is_object_dtype(result_df[col]):
+            if pd.api.types.is_categorical_dtype(
+                result_df[col]
+            ) or pd.api.types.is_object_dtype(result_df[col]):
                 # Skip categorical columns that haven't been one-hot encoded
                 continue
 
@@ -147,8 +165,7 @@ def create_interaction_features(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def select_features(
-    df: pd.DataFrame,
-    selected_features: List[str] = None
+    df: pd.DataFrame, selected_features: List[str] = None
 ) -> pd.DataFrame:
     """
     Select the specified features from the dataframe.
@@ -169,7 +186,8 @@ def select_features(
 
     if not valid_features:
         logger.warning(
-            "No valid features found for selection, returning original dataframe")
+            "No valid features found for selection, returning original dataframe"
+        )
         return df
 
     logger.info(f"Selecting {len(valid_features)} features")
@@ -183,7 +201,7 @@ def engineer_features(
     create_counts: bool = True,
     create_interactions: bool = True,
     select: bool = False,
-    selected_features: List[str] = SELECTED_FEATURES
+    selected_features: List[str] = SELECTED_FEATURES,
 ) -> pd.DataFrame:
     """
     Apply feature engineering to the dataframe.
@@ -195,7 +213,7 @@ def engineer_features(
         create_interactions: Whether to create interaction features.
         select: Whether to select only specific features.
         selected_features: List of feature names to select.
-        
+
     Returns:
         pandas.DataFrame: Dataframe with engineered features.
     """

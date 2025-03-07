@@ -12,7 +12,13 @@ RESULTS_DIR = ROOT_DIR / "results"
 VISUALIZATIONS_DIR = ROOT_DIR / "visualizations"
 
 # Create directories if they don't exist
-for directory in [PROCESSED_DATA_DIR, MODELS_DIR, LOGS_DIR, RESULTS_DIR, VISUALIZATIONS_DIR]:
+for directory in [
+    PROCESSED_DATA_DIR,
+    MODELS_DIR,
+    LOGS_DIR,
+    RESULTS_DIR,
+    VISUALIZATIONS_DIR,
+]:
     directory.mkdir(parents=True, exist_ok=True)
 
 # Data processing settings
@@ -34,7 +40,7 @@ CATEGORICAL_FEATURES = [
     "StreamingMovies",
     "Contract",
     "PaperlessBilling",
-    "PaymentMethod"
+    "PaymentMethod",
 ]
 NUMERICAL_FEATURES = ["tenure", "MonthlyCharges", "TotalCharges"]
 TARGET = "Churn"
@@ -45,7 +51,7 @@ LOGISTIC_REGRESSION_PARAMS = {
     "C": 1.0,
     "max_iter": 1000,
     "random_state": RANDOM_STATE,
-    "class_weight": "balanced"
+    "class_weight": "balanced",
 }
 
 DECISION_TREE_PARAMS = {
@@ -53,7 +59,7 @@ DECISION_TREE_PARAMS = {
     "min_samples_split": 2,
     "min_samples_leaf": 1,
     "random_state": RANDOM_STATE,
-    "class_weight": "balanced"
+    "class_weight": "balanced",
 }
 
 RANDOM_FOREST_PARAMS = {
@@ -63,7 +69,7 @@ RANDOM_FOREST_PARAMS = {
     "min_samples_leaf": 1,
     "random_state": RANDOM_STATE,
     "class_weight": "balanced",
-    "n_jobs": -1
+    "n_jobs": -1,
 }
 
 # Feature engineering settings
@@ -81,5 +87,5 @@ SELECTED_FEATURES = [
     "OnlineBackup",
     "DeviceProtection",
     "StreamingTV",
-    "StreamingMovies"
+    "StreamingMovies",
 ]

@@ -19,7 +19,7 @@ from src.config import (
     NUMERICAL_FEATURES,
     TARGET,
     SELECTED_FEATURES,
-    RANDOM_STATE
+    RANDOM_STATE,
 )
 from src.data.data_loader import load_raw_data, save_processed_data
 from src.data.data_preprocessor import clean_data, split_data, preprocess_data
@@ -29,18 +29,18 @@ from src.models.model_factory import (
     train_model,
     evaluate_model,
     get_feature_importance,
-    save_model
+    save_model,
 )
 from src.models.cross_validation import (
     perform_kfold_cv,
     compare_cv_results,
     analyze_threshold_performance,
-    get_optimal_threshold_by_metric
+    get_optimal_threshold_by_metric,
 )
 from src.evaluation.metrics import (
     calculate_metrics,
     evaluate_model_by_segment,
-    get_classification_report
+    get_classification_report,
 )
 from src.visualization.eda_visualizer import generate_eda_visualizations
 from src.visualization.advanced_model_visualizer import (
@@ -49,7 +49,7 @@ from src.visualization.advanced_model_visualizer import (
     plot_multiple_pr_curves,
     plot_threshold_analysis,
     plot_optimal_thresholds,
-    plot_confusion_matrices_at_thresholds
+    plot_confusion_matrices_at_thresholds,
 )
 
 logger = get_logger(__name__)
@@ -63,13 +63,11 @@ def parse_args():
         "--data_path",
         type=str,
         default=str(RAW_DATA_PATH),
-        help="Path to raw data file"
+        help="Path to raw data file",
     )
 
     parser.add_argument(
-        "--skip_eda",
-        action="store_true",
-        help="Skip exploratory data analysis"
+        "--skip_eda", action="store_true", help="Skip exploratory data analysis"
     )
 
     parser.add_argument(
@@ -78,26 +76,17 @@ def parse_args():
         nargs="+",
         choices=["lr", "dt", "rf", "ensemble", "all"],
         default=["all"],
-        help="Models to train"
+        help="Models to train",
+    )
+
+    parser.add_argument("--skip_cv", action="store_true", help="Skip cross-validation")
+
+    parser.add_argument(
+        "--cv_folds", type=int, default=5, help="Number of cross-validation folds"
     )
 
     parser.add_argument(
-        "--skip_cv",
-        action="store_true",
-        help="Skip cross-validation"
-    )
-
-    parser.add_argument(
-        "--cv_folds",
-        type=int,
-        default=5,
-        help="Number of cross-validation folds"
-    )
-
-    parser.add_argument(
-        "--skip_threshold",
-        action="store_true",
-        help="Skip threshold analysis"
+        "--skip_threshold", action="store_true", help="Skip threshold analysis"
     )
 
     return parser.parse_args()
@@ -109,11 +98,11 @@ def save_test_predictions(
     y_test: Union[pd.Series, np.ndarray],
     X_test_original: pd.DataFrame,
     customer_id_column: str = "customerID",
-    output_dir: Path = Path("results")
+    output_dir: Path = Path("results"),
 ) -> Path:
     """
     Save test predictions from multiple models to a CSV file.
-    
+
     Args:
         models_dict: Dictionary of trained models.
         X_test: Processed test features.
@@ -121,7 +110,7 @@ def save_test_predictions(
         X_test_original: Original unprocessed test features (for customer IDs).
         customer_id_column: Name of the customer ID column.
         output_dir: Directory to save the results.
-        
+
     Returns:
         Path: Path to the saved CSV file.
     """
@@ -133,31 +122,26 @@ def save_test_predictions(
 
     # Create DataFrame with customer IDs and true labels
     if customer_id_column in X_test_original.columns:
-        results_df = pd.DataFrame({
-            'CustomerID': X_test_original[customer_id_column],
-            'True_Churn': y_test
-        })
+        results_df = pd.DataFrame(
+            {"CustomerID": X_test_original[customer_id_column], "True_Churn": y_test}
+        )
     else:
         # Create index-based customer IDs if customer ID column doesn't exist
-        results_df = pd.DataFrame({
-            'Index': range(len(y_test)),
-            'True_Churn': y_test
-        })
+        results_df = pd.DataFrame({"Index": range(len(y_test)), "True_Churn": y_test})
 
     # Add predictions from each model
     for model_name, model in models_dict.items():
         # Add binary predictions
         y_pred = model.predict(X_test)
-        results_df[f'{model_name}_prediction'] = y_pred
+        results_df[f"{model_name}_prediction"] = y_pred
 
         # Add probability predictions if available
-        if hasattr(model, 'predict_proba'):
+        if hasattr(model, "predict_proba"):
             try:
                 y_prob = model.predict_proba(X_test)[:, 1]
-                results_df[f'{model_name}_probability'] = y_prob
+                results_df[f"{model_name}_probability"] = y_prob
             except Exception as e:
-                logger.warning(
-                    f"Could not get probabilities for {model_name}: {e}")
+                logger.warning(f"Could not get probabilities for {model_name}: {e}")
 
     # Save to CSV
     timestamp = time.strftime("%Y%m%d_%H%M%S")
@@ -172,12 +156,12 @@ def save_test_predictions(
 def create_segment_mapping(X_original, X_processed, original_column):
     """
     Create a mapping between original categorical values and processed feature columns.
-    
+
     Args:
         X_original: Original features dataframe
         X_processed: Processed features dataframe
         original_column: Original categorical column name
-        
+
     Returns:
         Dict: Mapping from original values to processed column names
     """
@@ -186,7 +170,8 @@ def create_segment_mapping(X_original, X_processed, original_column):
 
     # Find corresponding columns in processed data
     processed_columns = [
-        col for col in X_processed.columns if col.startswith(f"{original_column}_")]
+        col for col in X_processed.columns if col.startswith(f"{original_column}_")
+    ]
 
     # Create mapping
     for value in unique_values:
@@ -226,9 +211,15 @@ def main():
     if not args.skip_eda:
         logger.info("Generating EDA visualizations")
         service_columns = [
-            "PhoneService", "MultipleLines", "InternetService",
-            "OnlineSecurity", "OnlineBackup", "DeviceProtection",
-            "TechSupport", "StreamingTV", "StreamingMovies"
+            "PhoneService",
+            "MultipleLines",
+            "InternetService",
+            "OnlineSecurity",
+            "OnlineBackup",
+            "DeviceProtection",
+            "TechSupport",
+            "StreamingTV",
+            "StreamingMovies",
         ]
         _ = generate_eda_visualizations(
             df_cleaned,
@@ -236,7 +227,7 @@ def main():
             NUMERICAL_FEATURES,
             service_columns,
             TARGET,
-            VISUALIZATIONS_DIR
+            VISUALIZATIONS_DIR,
         )
 
     # Split data
@@ -247,20 +238,22 @@ def main():
 
     # Engineer features
     X_train = engineer_features(
-        X_train, create_groups=True, create_counts=True, create_interactions=True)
+        X_train, create_groups=True, create_counts=True, create_interactions=True
+    )
     X_test = engineer_features(
-        X_test, create_groups=True, create_counts=True, create_interactions=True)
+        X_test, create_groups=True, create_counts=True, create_interactions=True
+    )
 
     # Preprocess data
-    X_train_processed, X_test_processed, preprocessor = preprocess_data(
-        X_train, X_test)
+    X_train_processed, X_test_processed, preprocessor = preprocess_data(X_train, X_test)
 
     # Save processed data
     save_processed_data(X_train_processed, X_test_processed, y_train, y_test)
 
     # Create mapping for segment analysis
     contract_mapping = create_segment_mapping(
-        X_test_original, X_test_processed, "Contract")
+        X_test_original, X_test_processed, "Contract"
+    )
 
     # Train and evaluate models
     models = {}
@@ -283,17 +276,14 @@ def main():
         model_metrics = evaluate_model(model, X_test_processed, y_test)
 
         # Store probabilities if model supports it
-        if hasattr(model, 'predict_proba'):
+        if hasattr(model, "predict_proba"):
             try:
-                y_prob_dict[model_type] = model.predict_proba(X_test_processed)[
-                    :, 1]
+                y_prob_dict[model_type] = model.predict_proba(X_test_processed)[:, 1]
             except Exception as e:
-                logger.warning(
-                    f"Could not get probabilities for {model_type}: {e}")
+                logger.warning(f"Could not get probabilities for {model_type}: {e}")
 
         # Get feature importance
-        feature_importance = get_feature_importance(
-            model, X_train_processed.columns)
+        feature_importance = get_feature_importance(model, X_train_processed.columns)
 
         # Evaluate by contract type segment (using processed features and column names)
         # We need to evaluate each contract type separately using the processed feature columns
@@ -301,7 +291,9 @@ def main():
 
         for contract_type, processed_col in contract_mapping.items():
             # Create a segment mask for this contract type
-            segment_indices = X_test_processed[X_test_processed[processed_col] == 1].index
+            segment_indices = X_test_processed[
+                X_test_processed[processed_col] == 1
+            ].index
 
             # Skip if no samples in this segment
             if len(segment_indices) == 0:
@@ -309,33 +301,38 @@ def main():
 
             # Get segment data
             X_segment = X_test_processed.loc[segment_indices]
-            y_segment = y_test.iloc[segment_indices] if isinstance(
-                y_test, pd.Series) else y_test[segment_indices]
+            y_segment = (
+                y_test.iloc[segment_indices]
+                if isinstance(y_test, pd.Series)
+                else y_test[segment_indices]
+            )
 
             # Make predictions
             y_pred = model.predict(X_segment)
 
             # Calculate probabilities if model supports it
-            if hasattr(model, 'predict_proba'):
+            if hasattr(model, "predict_proba"):
                 try:
                     y_prob = model.predict_proba(X_segment)[:, 1]
                     metrics = calculate_metrics(y_segment, y_pred, y_prob)
                 except Exception as e:
                     logger.warning(
-                        f"Could not get probabilities for segment {contract_type}: {e}")
+                        f"Could not get probabilities for segment {contract_type}: {e}"
+                    )
                     metrics = calculate_metrics(y_segment, y_pred)
             else:
                 metrics = calculate_metrics(y_segment, y_pred)
 
             # Add churn rate
-            metrics['churn_rate'] = y_segment.mean()
-            metrics['count'] = len(y_segment)
+            metrics["churn_rate"] = y_segment.mean()
+            metrics["count"] = len(y_segment)
 
             # Store metrics for this segment
             contract_segment_metrics[contract_type] = metrics
 
             logger.info(
-                f"Segment {contract_type}: accuracy={metrics['accuracy']:.4f}, f1={metrics['f1']:.4f}, churn_rate={metrics['churn_rate']:.4f}, count={metrics['count']}")
+                f"Segment {contract_type}: accuracy={metrics['accuracy']:.4f}, f1={metrics['f1']:.4f}, churn_rate={metrics['churn_rate']:.4f}, count={metrics['count']}"
+            )
 
         # Store results
         models[model_type] = model
@@ -344,7 +341,8 @@ def main():
         segment_metrics[model_type] = contract_segment_metrics
 
         logger.info(
-            f"{model_type} model results: accuracy={model_metrics['accuracy']:.4f}, f1_score={model_metrics['f1_score']:.4f}")
+            f"{model_type} model results: accuracy={model_metrics['accuracy']:.4f}, f1_score={model_metrics['f1_score']:.4f}"
+        )
 
     # Save test set predictions to CSV
     results_dir = Path("results")
@@ -356,7 +354,7 @@ def main():
         y_test,
         X_test_original,
         customer_id_column="customerID",
-        output_dir=results_dir
+        output_dir=results_dir,
     )
     logger.info(f"Test predictions saved to {test_predictions_path}")
 
@@ -372,14 +370,14 @@ def main():
         _ = plot_multiple_roc_curves(
             y_test,
             y_prob_dict,
-            output_path=advanced_viz_dir / "roc_curves_comparison.png"
+            output_path=advanced_viz_dir / "roc_curves_comparison.png",
         )
 
         # Plot multiple PR curves
         _ = plot_multiple_pr_curves(
             y_test,
             y_prob_dict,
-            output_path=advanced_viz_dir / "pr_curves_comparison.png"
+            output_path=advanced_viz_dir / "pr_curves_comparison.png",
         )
 
     # Perform cross-validation unless explicitly skipped
@@ -388,16 +386,16 @@ def main():
 
         # We'll use unprocessed data and handle preprocessing in the cross-validation
         X_combined = pd.concat([X_train, X_test])
-        y_combined = pd.concat([y_train, y_test]) if isinstance(
-            y_train, pd.Series) else np.concatenate([y_train, y_test])
+        y_combined = (
+            pd.concat([y_train, y_test])
+            if isinstance(y_train, pd.Series)
+            else np.concatenate([y_train, y_test])
+        )
 
         try:
             # Perform cross-validation
             cv_results = perform_kfold_cv(
-                models,
-                X_combined,
-                y_combined,
-                n_splits=args.cv_folds
+                models, X_combined, y_combined, n_splits=args.cv_folds
             )
 
             # Compare cross-validation results
@@ -406,7 +404,7 @@ def main():
             # Plot cross-validation results
             _ = plot_cv_results(
                 cv_comparison_df,
-                output_path=advanced_viz_dir / "cross_validation_results.png"
+                output_path=advanced_viz_dir / "cross_validation_results.png",
             )
         except Exception as e:
             logger.error(f"Error during cross-validation: {e}")
@@ -427,13 +425,12 @@ def main():
 
             try:
                 # Analyze thresholds
-                threshold_results = analyze_threshold_performance(
-                    y_test, y_prob)
+                threshold_results = analyze_threshold_performance(y_test, y_prob)
 
                 # Plot threshold analysis
                 _ = plot_threshold_analysis(
                     threshold_results,
-                    output_path=model_threshold_dir / "threshold_analysis.png"
+                    output_path=model_threshold_dir / "threshold_analysis.png",
                 )
 
                 # Plot confusion matrices at different thresholds
@@ -441,19 +438,20 @@ def main():
                     y_test,
                     y_prob,
                     thresholds=[0.3, 0.4, 0.5, 0.6, 0.7],
-                    output_path=model_threshold_dir / "confusion_matrices_at_thresholds.png"
+                    output_path=model_threshold_dir
+                    / "confusion_matrices_at_thresholds.png",
                 )
 
                 # Get optimal threshold for different metrics
-                metrics_to_optimize = [
-                    'f1', 'precision', 'recall', 'balanced_accuracy']
+                metrics_to_optimize = ["f1", "precision", "recall", "balanced_accuracy"]
 
                 # For F1 score, create a model wrapper with optimal threshold
                 optimal_threshold, optimal_score = get_optimal_threshold_by_metric(
-                    y_test, y_prob, 'f1'
+                    y_test, y_prob, "f1"
                 )
                 logger.info(
-                    f"{model_name} optimal threshold for f1: {optimal_threshold:.4f} (score: {optimal_score:.4f})")
+                    f"{model_name} optimal threshold for f1: {optimal_threshold:.4f} (score: {optimal_score:.4f})"
+                )
 
                 # Create a class that wraps the model with optimal threshold
                 class OptimalThresholdWrapper:
@@ -470,7 +468,8 @@ def main():
 
                 # Add wrapped model to dictionary
                 optimal_models[f"{model_name}_optimal"] = OptimalThresholdWrapper(
-                    models[model_name], optimal_threshold)
+                    models[model_name], optimal_threshold
+                )
 
                 # Log other metrics' optimal thresholds
                 # Skip f1 as we already processed it
@@ -479,18 +478,18 @@ def main():
                         y_test, y_prob, metric
                     )
                     logger.info(
-                        f"{model_name} optimal threshold for {metric}: {optimal_threshold:.4f} (score: {optimal_score:.4f})")
+                        f"{model_name} optimal threshold for {metric}: {optimal_threshold:.4f} (score: {optimal_score:.4f})"
+                    )
 
             except Exception as e:
-                logger.error(
-                    f"Error during threshold analysis for {model_name}: {e}")
+                logger.error(f"Error during threshold analysis for {model_name}: {e}")
 
         try:
             # Plot optimal thresholds comparison
             _ = plot_optimal_thresholds(
                 y_test,
                 y_prob_dict,
-                output_path=advanced_viz_dir / "optimal_thresholds_comparison.png"
+                output_path=advanced_viz_dir / "optimal_thresholds_comparison.png",
             )
 
             # Save predictions with optimal thresholds
@@ -501,10 +500,11 @@ def main():
                     y_test,
                     X_test_original,
                     customer_id_column="customerID",
-                    output_dir=results_dir
+                    output_dir=results_dir,
                 )
                 logger.info(
-                    f"Optimal threshold predictions saved to {optimal_predictions_path}")
+                    f"Optimal threshold predictions saved to {optimal_predictions_path}"
+                )
 
         except Exception as e:
             logger.error(f"Error in threshold optimization: {e}")
@@ -512,8 +512,7 @@ def main():
     # Calculate and print execution time
     end_time = time.time()
     execution_time = end_time - start_time
-    logger.info(
-        f"Pipeline execution completed in {execution_time:.2f} seconds")
+    logger.info(f"Pipeline execution completed in {execution_time:.2f} seconds")
 
 
 if __name__ == "__main__":

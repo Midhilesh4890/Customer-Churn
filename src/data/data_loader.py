@@ -14,10 +14,10 @@ logger = get_logger(__name__)
 def load_raw_data(file_path: Union[str, Path] = RAW_DATA_PATH) -> pd.DataFrame:
     """
     Load the raw data from the given file path.
-    
+
     Args:
         file_path: Path to the raw data file.
-        
+
     Returns:
         pandas.DataFrame: The loaded data.
     """
@@ -37,18 +37,18 @@ def save_processed_data(
     X_test: pd.DataFrame,
     y_train: pd.Series,
     y_test: pd.Series,
-    output_dir: Union[str, Path] = PROCESSED_DATA_DIR
+    output_dir: Union[str, Path] = PROCESSED_DATA_DIR,
 ) -> Dict[str, Path]:
     """
     Save the processed data (training and testing sets) to the specified directory.
-    
+
     Args:
         X_train: Training features.
         X_test: Testing features.
         y_train: Training labels.
         y_test: Testing labels.
         output_dir: Directory to save the processed data files.
-        
+
     Returns:
         Dict: Paths to the saved files.
     """
@@ -92,10 +92,10 @@ def load_processed_data(
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """
     Load processed data from the specified directory.
-    
+
     Args:
         data_dir: Directory containing the processed data files.
-        
+
     Returns:
         Tuple: (X_train, X_test, y_train, y_test)
     """

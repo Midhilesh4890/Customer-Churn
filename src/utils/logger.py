@@ -10,11 +10,11 @@ from src.config import LOGS_DIR
 def get_logger(name: str, log_level: int = logging.INFO) -> logging.Logger:
     """
     Creates and returns a logger with the specified name and log level.
-    
+
     Args:
         name (str): The name of the logger.
         log_level (int): The logging level (default: logging.INFO).
-        
+
     Returns:
         logging.Logger: Configured logger instance.
     """
@@ -25,7 +25,7 @@ def get_logger(name: str, log_level: int = logging.INFO) -> logging.Logger:
     # Create formatter
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     # Create console handler

@@ -23,18 +23,16 @@ def set_visualization_style():
 
 
 def plot_target_distribution(
-    df: pd.DataFrame,
-    target_column: str = "Churn",
-    output_path: Optional[Path] = None
+    df: pd.DataFrame, target_column: str = "Churn", output_path: Optional[Path] = None
 ) -> plt.Figure:
     """
     Plot the distribution of the target variable.
-    
+
     Args:
         df: Dataframe with the target column.
         target_column: Name of the target column.
         output_path: Path to save the plot (optional).
-        
+
     Returns:
         matplotlib.figure.Figure: The plot figure.
     """
@@ -86,23 +84,24 @@ def plot_categorical_vs_target(
     categorical_columns: List[str],
     target_column: str = "Churn",
     output_dir: Optional[Path] = None,
-    figsize: Tuple[int, int] = (14, 8)
+    figsize: Tuple[int, int] = (14, 8),
 ) -> Dict[str, plt.Figure]:
     """
     Plot the relationship between categorical features and the target variable.
-    
+
     Args:
         df: Dataframe with categorical columns and target column.
         categorical_columns: List of categorical column names.
         target_column: Name of the target column.
         output_dir: Directory to save the plots (optional).
         figsize: Figure size.
-        
+
     Returns:
         Dict: Dictionary of plot figures by feature name.
     """
     logger.info(
-        f"Plotting relationship between categorical features and {target_column}")
+        f"Plotting relationship between categorical features and {target_column}"
+    )
 
     set_visualization_style()
 
@@ -141,8 +140,7 @@ def plot_categorical_vs_target(
         # Add percentage labels for the "Yes" (churn) category
         if "Yes" in percentages.columns:
             for i, (_, pct) in enumerate(percentages["Yes"].items()):
-                ax[1].text(i, pct / 2, f"{pct:.1f}%",
-                           ha="center", color="white")
+                ax[1].text(i, pct / 2, f"{pct:.1f}%", ha="center", color="white")
 
         plt.tight_layout()
 
@@ -162,23 +160,22 @@ def plot_numerical_vs_target(
     numerical_columns: List[str],
     target_column: str = "Churn",
     output_dir: Optional[Path] = None,
-    figsize: Tuple[int, int] = (14, 8)
+    figsize: Tuple[int, int] = (14, 8),
 ) -> Dict[str, plt.Figure]:
     """
     Plot the relationship between numerical features and the target variable.
-    
+
     Args:
         df: Dataframe with numerical columns and target column.
         numerical_columns: List of numerical column names.
         target_column: Name of the target column.
         output_dir: Directory to save the plots (optional).
         figsize: Figure size.
-        
+
     Returns:
         Dict: Dictionary of plot figures by feature name.
     """
-    logger.info(
-        f"Plotting relationship between numerical features and {target_column}")
+    logger.info(f"Plotting relationship between numerical features and {target_column}")
 
     set_visualization_style()
 
@@ -224,16 +221,16 @@ def plot_numerical_vs_target(
 def plot_correlation_matrix(
     df: pd.DataFrame,
     output_path: Optional[Path] = None,
-    figsize: Tuple[int, int] = (14, 12)
+    figsize: Tuple[int, int] = (14, 12),
 ) -> plt.Figure:
     """
     Plot correlation matrix of features.
-    
+
     Args:
         df: Dataframe with features.
         output_path: Path to save the plot (optional).
         figsize: Figure size.
-        
+
     Returns:
         matplotlib.figure.Figure: The plot figure.
     """
@@ -245,7 +242,10 @@ def plot_correlation_matrix(
     df_numeric = df.copy()
 
     for col in df_numeric.columns:
-        if df_numeric[col].dtype == "object" or df_numeric[col].dtype.name == "category":
+        if (
+            df_numeric[col].dtype == "object"
+            or df_numeric[col].dtype.name == "category"
+        ):
             df_numeric[col] = pd.factorize(df_numeric[col])[0]
 
     # Calculate correlation matrix
@@ -270,7 +270,7 @@ def plot_correlation_matrix(
         cbar_kws={"shrink": 0.8},
         annot=True,
         fmt=".2f",
-        ax=ax
+        ax=ax,
     )
 
     ax.set_title("Feature Correlation Matrix")
@@ -288,18 +288,18 @@ def plot_tenure_distribution(
     tenure_column: str = "tenure",
     target_column: str = "Churn",
     output_path: Optional[Path] = None,
-    figsize: Tuple[int, int] = (14, 8)
+    figsize: Tuple[int, int] = (14, 8),
 ) -> plt.Figure:
     """
     Plot the distribution of tenure by churn status.
-    
+
     Args:
         df: Dataframe with tenure and target columns.
         tenure_column: Name of the tenure column.
         target_column: Name of the target column.
         output_path: Path to save the plot (optional).
         figsize: Figure size.
-        
+
     Returns:
         matplotlib.figure.Figure: The plot figure.
     """
@@ -309,11 +309,11 @@ def plot_tenure_distribution(
 
     # Create tenure bins
     bins = [0, 12, 24, 36, 48, 60, 72]
-    labels = ['0-12', '13-24', '25-36', '37-48', '49-60', '61-72']
+    labels = ["0-12", "13-24", "25-36", "37-48", "49-60", "61-72"]
 
     # Add tenure group column
     df_with_groups = df.copy()
-    df_with_groups['tenure_group'] = pd.cut(
+    df_with_groups["tenure_group"] = pd.cut(
         df_with_groups[tenure_column], bins=bins, labels=labels, right=True
     )
 
@@ -322,19 +322,20 @@ def plot_tenure_distribution(
 
     # Plot tenure distribution
     sns.histplot(
-        data=df, x=tenure_column, hue=target_column,
-        multiple="stack", bins=12, ax=ax[0]
+        data=df, x=tenure_column, hue=target_column, multiple="stack", bins=12, ax=ax[0]
     )
     ax[0].set_title(f"Distribution of {tenure_column} by {target_column}")
     ax[0].set_xlabel(f"{tenure_column} (months)")
     ax[0].set_ylabel("Count")
 
     # Plot churn rate by tenure group
-    group_churn = df_with_groups.groupby('tenure_group')[target_column].apply(
-        lambda x: (x == 'Yes').mean() * 100 if 'Yes' in x.unique() else 0
-    ).reset_index()
+    group_churn = (
+        df_with_groups.groupby("tenure_group")[target_column]
+        .apply(lambda x: (x == "Yes").mean() * 100 if "Yes" in x.unique() else 0)
+        .reset_index()
+    )
 
-    sns.barplot(x='tenure_group', y=target_column, data=group_churn, ax=ax[1])
+    sns.barplot(x="tenure_group", y=target_column, data=group_churn, ax=ax[1])
     ax[1].set_title(f"{target_column} Rate by Tenure Group")
     ax[1].set_xlabel("Tenure Group (months)")
     ax[1].set_ylabel(f"{target_column} Rate (%)")
@@ -358,18 +359,18 @@ def plot_service_distribution(
     service_columns: List[str],
     target_column: str = "Churn",
     output_path: Optional[Path] = None,
-    figsize: Tuple[int, int] = (16, 10)
+    figsize: Tuple[int, int] = (16, 10),
 ) -> plt.Figure:
     """
     Plot churn rate by service subscription.
-    
+
     Args:
         df: Dataframe with service columns and target column.
         service_columns: List of service column names.
         target_column: Name of the target column.
         output_path: Path to save the plot (optional).
         figsize: Figure size.
-        
+
     Returns:
         matplotlib.figure.Figure: The plot figure.
     """
@@ -385,22 +386,30 @@ def plot_service_distribution(
 
     for col in valid_columns:
         # Skip if column doesn't have "Yes" values (e.g., if it's not a binary service column)
-        if 'Yes' not in df[col].unique():
+        if "Yes" not in df[col].unique():
             continue
 
-        churn_rate_with_service = df[df[col] == 'Yes'][target_column].apply(
-            lambda x: 1 if x == 'Yes' else 0
-        ).mean() * 100
+        churn_rate_with_service = (
+            df[df[col] == "Yes"][target_column]
+            .apply(lambda x: 1 if x == "Yes" else 0)
+            .mean()
+            * 100
+        )
 
-        churn_rate_without_service = df[df[col] != 'Yes'][target_column].apply(
-            lambda x: 1 if x == 'Yes' else 0
-        ).mean() * 100
+        churn_rate_without_service = (
+            df[df[col] != "Yes"][target_column]
+            .apply(lambda x: 1 if x == "Yes" else 0)
+            .mean()
+            * 100
+        )
 
-        service_churn.append({
-            'Service': col,
-            'With Service': churn_rate_with_service,
-            'Without Service': churn_rate_without_service
-        })
+        service_churn.append(
+            {
+                "Service": col,
+                "With Service": churn_rate_with_service,
+                "Without Service": churn_rate_without_service,
+            }
+        )
 
     # Create a dataframe for plotting
     service_churn_df = pd.DataFrame(service_churn)
@@ -408,30 +417,29 @@ def plot_service_distribution(
     # Melt the dataframe for easier plotting
     melted_df = pd.melt(
         service_churn_df,
-        id_vars=['Service'],
-        value_vars=['With Service', 'Without Service'],
-        var_name='Status',
-        value_name='Churn Rate (%)'
+        id_vars=["Service"],
+        value_vars=["With Service", "Without Service"],
+        var_name="Status",
+        value_name="Churn Rate (%)",
     )
 
     # Create figure
     fig, ax = plt.subplots(figsize=figsize)
 
     # Plot churn rate by service
-    sns.barplot(x='Service', y='Churn Rate (%)',
-                hue='Status', data=melted_df, ax=ax)
+    sns.barplot(x="Service", y="Churn Rate (%)", hue="Status", data=melted_df, ax=ax)
     ax.set_title(f"{target_column} Rate by Service Subscription")
     ax.set_xlabel("Service")
     ax.set_ylabel(f"{target_column} Rate (%)")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
 
     # Add percentage labels
     for i, p in enumerate(ax.patches):
         ax.text(
-            p.get_x() + p.get_width() / 2.,
+            p.get_x() + p.get_width() / 2.0,
             p.get_height() + 0.5,
             f"{p.get_height():.1f}%",
-            ha="center"
+            ha="center",
         )
 
     plt.tight_layout()
@@ -450,11 +458,11 @@ def generate_eda_visualizations(
     numerical_columns: List[str],
     service_columns: List[str],
     target_column: str = "Churn",
-    output_dir: Path = VISUALIZATIONS_DIR
+    output_dir: Path = VISUALIZATIONS_DIR,
 ) -> Dict[str, plt.Figure]:
     """
     Generate all EDA visualizations.
-    
+
     Args:
         df: Dataframe with features and target column.
         categorical_columns: List of categorical column names.
@@ -462,7 +470,7 @@ def generate_eda_visualizations(
         service_columns: List of service column names.
         target_column: Name of the target column.
         output_dir: Directory to save the plots.
-        
+
     Returns:
         Dict: Dictionary of plot figures by plot name.
     """
@@ -482,15 +490,15 @@ def generate_eda_visualizations(
     categorical_plots = plot_categorical_vs_target(
         df, categorical_columns, target_column, eda_dir / "categorical"
     )
-    plots.update({f"categorical_{key}": value for key,
-                 value in categorical_plots.items()})
+    plots.update(
+        {f"categorical_{key}": value for key, value in categorical_plots.items()}
+    )
 
     # Plot numerical features vs target
     numerical_plots = plot_numerical_vs_target(
         df, numerical_columns, target_column, eda_dir / "numerical"
     )
-    plots.update({f"numerical_{key}": value for key,
-                 value in numerical_plots.items()})
+    plots.update({f"numerical_{key}": value for key, value in numerical_plots.items()})
 
     # Plot correlation matrix
     plots["correlation_matrix"] = plot_correlation_matrix(
