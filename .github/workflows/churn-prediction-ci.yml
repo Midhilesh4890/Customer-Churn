@@ -56,4 +56,4 @@ jobs:
       with:
         name: churn-prediction-docker-image
         path: /tmp/churn-prediction.tar
-        retention-days: 1
+        retention-days: 2
