@@ -8,7 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the project files
 COPY . .
-RUN pip install -e .
 
 # Create necessary directories
 RUN mkdir -p data/raw data/processed logs models results visualizations
