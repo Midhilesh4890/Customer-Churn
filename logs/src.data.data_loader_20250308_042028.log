@@ -1,4 +1,0 @@
-2025-03-08 04:20:29 - src.data.data_loader - INFO - Loading raw data from D:\Projects\Customer-Churn\data\raw\data.csv
-2025-03-08 04:20:29 - src.data.data_loader - INFO - Successfully loaded data with shape (7043, 21)
-2025-03-08 04:20:44 - src.data.data_loader - INFO - Saving processed data to D:\Projects\Customer-Churn\data\processed
-2025-03-08 04:20:44 - src.data.data_loader - INFO - Successfully saved processed data

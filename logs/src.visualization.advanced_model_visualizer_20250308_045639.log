@@ -1,0 +1,18 @@
+2025-03-08 04:56:57 - src.visualization.advanced_model_visualizer - INFO - Plotting multiple ROC curves
+2025-03-08 04:56:58 - src.visualization.advanced_model_visualizer - INFO - Saved multiple ROC curves plot to D:\Projects\Customer-Churn\visualizations\advanced\roc_curves_comparison.png
+2025-03-08 04:56:58 - src.visualization.advanced_model_visualizer - INFO - Plotting multiple precision-recall curves
+2025-03-08 04:56:58 - src.visualization.advanced_model_visualizer - INFO - Saved multiple precision-recall curves plot to D:\Projects\Customer-Churn\visualizations\advanced\pr_curves_comparison.png
+2025-03-08 04:56:59 - src.visualization.advanced_model_visualizer - INFO - Plotting threshold analysis
+2025-03-08 04:57:00 - src.visualization.advanced_model_visualizer - INFO - Saved threshold analysis plot to D:\Projects\Customer-Churn\visualizations\advanced\lr\threshold_analysis.png
+2025-03-08 04:57:00 - src.visualization.advanced_model_visualizer - INFO - Plotting confusion matrices at different thresholds
+2025-03-08 04:57:01 - src.visualization.advanced_model_visualizer - INFO - Saved confusion matrices at thresholds plot to D:\Projects\Customer-Churn\visualizations\advanced\lr\confusion_matrices_at_thresholds.png
+2025-03-08 04:57:01 - src.visualization.advanced_model_visualizer - INFO - Plotting threshold analysis
+2025-03-08 04:57:02 - src.visualization.advanced_model_visualizer - INFO - Saved threshold analysis plot to D:\Projects\Customer-Churn\visualizations\advanced\dt\threshold_analysis.png
+2025-03-08 04:57:02 - src.visualization.advanced_model_visualizer - INFO - Plotting confusion matrices at different thresholds
+2025-03-08 04:57:03 - src.visualization.advanced_model_visualizer - INFO - Saved confusion matrices at thresholds plot to D:\Projects\Customer-Churn\visualizations\advanced\dt\confusion_matrices_at_thresholds.png
+2025-03-08 04:57:03 - src.visualization.advanced_model_visualizer - INFO - Plotting threshold analysis
+2025-03-08 04:57:04 - src.visualization.advanced_model_visualizer - INFO - Saved threshold analysis plot to D:\Projects\Customer-Churn\visualizations\advanced\rf\threshold_analysis.png
+2025-03-08 04:57:04 - src.visualization.advanced_model_visualizer - INFO - Plotting confusion matrices at different thresholds
+2025-03-08 04:57:05 - src.visualization.advanced_model_visualizer - INFO - Saved confusion matrices at thresholds plot to D:\Projects\Customer-Churn\visualizations\advanced\rf\confusion_matrices_at_thresholds.png
+2025-03-08 04:57:05 - src.visualization.advanced_model_visualizer - INFO - Plotting optimal thresholds by metric
+2025-03-08 04:57:08 - src.visualization.advanced_model_visualizer - INFO - Saved optimal thresholds plot to D:\Projects\Customer-Churn\visualizations\advanced\optimal_thresholds_comparison.png

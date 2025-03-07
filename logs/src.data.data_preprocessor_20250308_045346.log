@@ -1,0 +1,8 @@
+2025-03-08 04:53:47 - src.data.data_preprocessor - INFO - Cleaning raw data
+2025-03-08 04:53:47 - src.data.data_preprocessor - INFO - Data cleaning completed. Shape: (7043, 22)
+2025-03-08 04:54:04 - src.data.data_preprocessor - INFO - Splitting data with test_size=0.3, random_state=42
+2025-03-08 04:54:04 - src.data.data_preprocessor - INFO - Data split completed: X_train=(4930, 19), X_test=(2113, 19), y_train=(4930,), y_test=(2113,)
+2025-03-08 04:54:05 - src.data.data_preprocessor - INFO - Preprocessing data
+2025-03-08 04:54:05 - src.data.data_preprocessor - INFO - Building data preprocessor
+2025-03-08 04:54:05 - src.data.data_preprocessor - INFO - Preprocessor built successfully
+2025-03-08 04:54:05 - src.data.data_preprocessor - INFO - Data preprocessing completed: X_train=(4930, 30), X_test=(2113, 30)

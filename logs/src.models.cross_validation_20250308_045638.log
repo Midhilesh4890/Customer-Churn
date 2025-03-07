@@ -1,0 +1,111 @@
+2025-03-08 04:56:58 - src.models.cross_validation - INFO - Performing 5-fold cross-validation
+2025-03-08 04:56:58 - src.models.cross_validation - INFO - Cross-validating lr model
+2025-03-08 04:56:59 - src.models.cross_validation - ERROR - Error during cross-validation for lr: 
+All the 5 fits failed.
+It is very likely that your model is misconfigured.
+You can try to debug the error by setting error_score='raise'.
+
+Below are more details about the failures:
+--------------------------------------------------------------------------------
+5 fits failed with the following error:
+Traceback (most recent call last):
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\model_selection\_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\linear_model\_logistic.py", line 1196, in fit
+    X, y = self._validate_data(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\base.py", line 584, in _validate_data
+    X, y = check_X_y(X, y, **check_params)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\utils\validation.py", line 1106, in check_X_y
+    X = check_array(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\utils\validation.py", line 810, in check_array
+    array = array.astype(new_dtype)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\generic.py", line 6324, in astype
+    new_data = self._mgr.astype(dtype=dtype, copy=copy, errors=errors)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\managers.py", line 451, in astype
+    return self.apply(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\managers.py", line 352, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\blocks.py", line 511, in astype
+    new_values = astype_array_safe(values, dtype, copy=copy, errors=errors)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 242, in astype_array_safe
+    new_values = astype_array(values, dtype, copy=copy)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 187, in astype_array
+    values = _astype_nansafe(values, dtype, copy=copy)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 138, in _astype_nansafe
+    return arr.astype(dtype, copy=True)
+ValueError: could not convert string to float: 'Female'
+
+2025-03-08 04:56:59 - src.models.cross_validation - INFO - Cross-validating dt model
+2025-03-08 04:56:59 - src.models.cross_validation - ERROR - Error during cross-validation for dt: 
+All the 5 fits failed.
+It is very likely that your model is misconfigured.
+You can try to debug the error by setting error_score='raise'.
+
+Below are more details about the failures:
+--------------------------------------------------------------------------------
+5 fits failed with the following error:
+Traceback (most recent call last):
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\model_selection\_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\tree\_classes.py", line 889, in fit
+    super().fit(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\tree\_classes.py", line 186, in fit
+    X, y = self._validate_data(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\base.py", line 579, in _validate_data
+    X = check_array(X, input_name="X", **check_X_params)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\utils\validation.py", line 810, in check_array
+    array = array.astype(new_dtype)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\generic.py", line 6324, in astype
+    new_data = self._mgr.astype(dtype=dtype, copy=copy, errors=errors)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\managers.py", line 451, in astype
+    return self.apply(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\managers.py", line 352, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\blocks.py", line 511, in astype
+    new_values = astype_array_safe(values, dtype, copy=copy, errors=errors)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 242, in astype_array_safe
+    new_values = astype_array(values, dtype, copy=copy)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 187, in astype_array
+    values = _astype_nansafe(values, dtype, copy=copy)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 138, in _astype_nansafe
+    return arr.astype(dtype, copy=True)
+ValueError: could not convert string to float: 'Female'
+
+2025-03-08 04:56:59 - src.models.cross_validation - INFO - Cross-validating rf model
+2025-03-08 04:56:59 - src.models.cross_validation - ERROR - Error during cross-validation for rf: 
+All the 5 fits failed.
+It is very likely that your model is misconfigured.
+You can try to debug the error by setting error_score='raise'.
+
+Below are more details about the failures:
+--------------------------------------------------------------------------------
+5 fits failed with the following error:
+Traceback (most recent call last):
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\model_selection\_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\ensemble\_forest.py", line 345, in fit
+    X, y = self._validate_data(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\base.py", line 584, in _validate_data
+    X, y = check_X_y(X, y, **check_params)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\utils\validation.py", line 1106, in check_X_y
+    X = check_array(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\sklearn\utils\validation.py", line 810, in check_array
+    array = array.astype(new_dtype)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\generic.py", line 6324, in astype
+    new_data = self._mgr.astype(dtype=dtype, copy=copy, errors=errors)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\managers.py", line 451, in astype
+    return self.apply(
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\managers.py", line 352, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\internals\blocks.py", line 511, in astype
+    new_values = astype_array_safe(values, dtype, copy=copy, errors=errors)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 242, in astype_array_safe
+    new_values = astype_array(values, dtype, copy=copy)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 187, in astype_array
+    values = _astype_nansafe(values, dtype, copy=copy)
+  File "D:\Projects\Customer-Churn\.venv\lib\site-packages\pandas\core\dtypes\astype.py", line 138, in _astype_nansafe
+    return arr.astype(dtype, copy=True)
+ValueError: could not convert string to float: 'Female'
+
+2025-03-08 04:56:59 - src.models.cross_validation - INFO - Cross-validating ensemble model
+2025-03-08 04:56:59 - src.models.cross_validation - ERROR - Error during cross-validation for ensemble: VotingClassifier.__init__() got an unexpected keyword argument 'lr'
