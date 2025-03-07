@@ -11,6 +11,10 @@ LOGS_DIR = ROOT_DIR / "logs"
 RESULTS_DIR = ROOT_DIR / "results"
 VISUALIZATIONS_DIR = ROOT_DIR / "visualizations"
 
+# Create directories if they don't exist
+for directory in [PROCESSED_DATA_DIR, MODELS_DIR, LOGS_DIR, RESULTS_DIR, VISUALIZATIONS_DIR]:
+    directory.mkdir(parents=True, exist_ok=True)
+
 # Data processing settings
 RANDOM_STATE = 42
 TEST_SIZE = 0.3

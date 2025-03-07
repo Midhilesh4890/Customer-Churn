@@ -1,3 +1,6 @@
+"""
+Model visualization utilities for the churn prediction project.
+"""
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Any, Union, Optional
@@ -317,7 +320,8 @@ def plot_decision_tree(
 
 def plot_model_comparison(
     metrics_dict: Dict[str, Dict[str, float]],
-    metrics_to_plot: List[str] = ['accuracy', 'precision', 'recall', 'f1'],
+    metrics_to_plot: List[str] = [
+        'accuracy', 'precision', 'recall', 'f1_score'],
     output_path: Optional[Path] = None,
     figsize: Tuple[int, int] = (14, 8)
 ) -> plt.Figure:
@@ -341,12 +345,17 @@ def plot_model_comparison(
     model_metrics = []
 
     for model_name, metrics in metrics_dict.items():
-        for metric, value in metrics.items():
-            if metric in metrics_to_plot:
+        for metric_name in metrics_to_plot:
+            if metric_name in metrics:
+                # Make sure the metric value is a scalar
+                metric_value = metrics[metric_name]
+                if isinstance(metric_value, (np.ndarray, list)):
+                    continue
+
                 model_metrics.append({
                     'Model': model_name,
-                    'Metric': metric.capitalize(),
-                    'Value': value
+                    'Metric': metric_name.capitalize(),
+                    'Value': float(metric_value)  # Ensure it's a float
                 })
 
     model_metrics_df = pd.DataFrame(model_metrics)
@@ -381,95 +390,102 @@ def plot_model_comparison(
     return fig
 
 
-def plot_segment_performance(
-    segment_metrics: Dict[str, Dict[str, float]],
-    metric: str = 'f1',
+def plot_model_comparison(
+    metrics_dict: Dict[str, Dict[str, float]],
+    metrics_to_plot: List[str] = [
+        'accuracy', 'precision', 'recall', 'f1_score'],
     output_path: Optional[Path] = None,
     figsize: Tuple[int, int] = (14, 8)
 ) -> plt.Figure:
     """
-    Plot model performance by segment.
+    Plot model comparison.
     
     Args:
-        segment_metrics: Dictionary of metrics by segment.
-        metric: Metric to plot.
+        metrics_dict: Dictionary of model metrics.
+        metrics_to_plot: List of metrics to plot.
         output_path: Path to save the plot (optional).
         figsize: Figure size.
         
     Returns:
         matplotlib.figure.Figure: The plot figure.
     """
-    logger.info(f"Plotting model performance by segment (metric={metric})")
+    logger.info("Plotting model comparison")
 
     set_visualization_style()
 
     # Create dataframe for plotting
-    segment_data = []
+    model_metrics = []
 
-    for segment, metrics in segment_metrics.items():
-        if metric in metrics:
-            segment_data.append({
-                'Segment': segment,
-                metric.capitalize(): metrics[metric],
-                'Churn Rate': metrics.get('churn_rate', 0) * 100 if metrics.get('churn_rate', 0) <= 1 else metrics.get('churn_rate', 0),
-                'Count': metrics.get('count', 0)
-            })
+    for model_name, metrics in metrics_dict.items():
+        # Verify that metrics is a dictionary before processing
+        if not isinstance(metrics, dict):
+            logger.warning(
+                f"Metrics for model {model_name} is not a dictionary, skipping")
+            continue
 
-    segment_df = pd.DataFrame(segment_data)
+        for metric_name in metrics_to_plot:
+            if metric_name in metrics:
+                metric_value = metrics[metric_name]
 
-    # Sort by churn rate
-    segment_df = segment_df.sort_values('Churn Rate', ascending=False)
+                # Skip if metric value is not a scalar
+                if isinstance(metric_value, (list, np.ndarray)):
+                    continue
+
+                # Ensure value is a float
+                try:
+                    float_value = float(metric_value)
+
+                    model_metrics.append({
+                        'Model': model_name,
+                        'Metric': metric_name.capitalize(),
+                        'Value': float_value
+                    })
+                except (ValueError, TypeError):
+                    logger.warning(
+                        f"Could not convert metric {metric_name} to float for model {model_name}")
+
+    # If no valid metrics, create an empty plot with a message
+    if not model_metrics:
+        logger.warning("No valid metrics for comparison plot")
+        fig, ax = plt.subplots(figsize=figsize)
+        ax.text(0.5, 0.5, "No valid metrics available for comparison",
+                ha='center', va='center', fontsize=14)
+        ax.set_title('Model Comparison')
+
+        if output_path:
+            plt.savefig(output_path, dpi=300, bbox_inches="tight")
+
+        return fig
+
+    # Create dataframe
+    model_metrics_df = pd.DataFrame(model_metrics)
 
     # Create figure
-    fig, ax1 = plt.subplots(figsize=figsize)
+    fig, ax = plt.subplots(figsize=figsize)
 
-    # Plot metric bars
+    # Plot model comparison
     sns.barplot(
-        x='Segment',
-        y=metric.capitalize(),
-        data=segment_df,
-        color='steelblue',
-        ax=ax1
+        x='Model',
+        y='Value',
+        hue='Metric',
+        data=model_metrics_df,
+        ax=ax
     )
 
-    ax1.set_title(f'Model Performance ({metric.capitalize()}) by Segment')
-    ax1.set_xlabel('Segment')
-    ax1.set_ylabel(f'{metric.capitalize()} Score')
-    ax1.set_xticklabels(ax1.get_xticklabels(), rotation=45, ha='right')
+    ax.set_title('Model Comparison')
+    ax.set_xlabel('Model')
+    ax.set_ylabel('Score')
+    ax.legend(title='Metric')
 
-    # Create second y-axis for churn rate
-    ax2 = ax1.twinx()
-
-    # Plot churn rate points
-    ax2.plot(
-        segment_df.index,
-        segment_df['Churn Rate'],
-        'ro-',
-        linewidth=2,
-        markersize=8
-    )
-
-    ax2.set_ylabel('Churn Rate (%)', color='r')
-    ax2.tick_params(axis='y', colors='r')
-
-    # Add count labels
-    for i, count in enumerate(segment_df['Count']):
-        ax1.text(
-            i,
-            0.05,
-            f"n={count}",
-            ha='center',
-            va='bottom',
-            color='gray',
-            fontsize=9
-        )
+    # Add grid
+    ax.grid(True, linestyle='--', alpha=0.7)
 
     plt.tight_layout()
 
     # Save plot if output path is provided
     if output_path:
         plt.savefig(output_path, dpi=300, bbox_inches="tight")
-        logger.info(f"Saved segment performance plot to {output_path}")
+        logger.info(f"Saved model comparison plot to {output_path}")
 
     return fig
 
@@ -522,20 +538,25 @@ def generate_model_visualizations(
         y_pred = model.predict(X_test)
 
         # Calculate probabilities if supported
+        y_prob = None
         if hasattr(model, 'predict_proba'):
-            y_prob = model.predict_proba(X_test)[:, 1]
+            try:
+                y_prob = model.predict_proba(X_test)[:, 1]
 
-            # Plot ROC curve
-            plots[f"{model_name}_roc_curve"] = plot_roc_curve(
-                y_test, y_prob,
-                output_path=model_specific_dir / "roc_curve.png"
-            )
+                # Plot ROC curve
+                plots[f"{model_name}_roc_curve"] = plot_roc_curve(
+                    y_test, y_prob,
+                    output_path=model_specific_dir / "roc_curve.png"
+                )
 
-            # Plot precision-recall curve
-            plots[f"{model_name}_pr_curve"] = plot_precision_recall_curve(
-                y_test, y_prob,
-                output_path=model_specific_dir / "pr_curve.png"
-            )
+                # Plot precision-recall curve
+                plots[f"{model_name}_pr_curve"] = plot_precision_recall_curve(
+                    y_test, y_prob,
+                    output_path=model_specific_dir / "pr_curve.png"
+                )
+            except Exception as e:
+                logger.warning(
+                    f"Could not generate probability-based plots for {model_name}: {e}")
 
         # Plot confusion matrix
         plots[f"{model_name}_confusion_matrix"] = plot_confusion_matrix(
@@ -544,7 +565,7 @@ def generate_model_visualizations(
         )
 
         # Plot feature importance if available
-        if model_name in feature_importance_dict:
+        if model_name in feature_importance_dict and not feature_importance_dict[model_name].empty:
             plots[f"{model_name}_feature_importance"] = plot_feature_importance(
                 feature_importance_dict[model_name],
                 output_path=model_specific_dir / "feature_importance.png"
@@ -559,11 +580,15 @@ def generate_model_visualizations(
             )
 
         # Plot segment performance if available
-        if model_name in segment_metrics_dict:
-            plots[f"{model_name}_segment_performance"] = plot_segment_performance(
-                segment_metrics_dict[model_name],
-                output_path=model_specific_dir / "segment_performance.png"
-            )
+        if model_name in segment_metrics_dict and segment_metrics_dict[model_name]:
+            try:
+                plots[f"{model_name}_segment_performance"] = plot_segment_performance(
+                    segment_metrics_dict[model_name],
+                    output_path=model_specific_dir / "segment_performance.png"
+                )
+            except Exception as e:
+                logger.warning(
+                    f"Could not generate segment performance plot for {model_name}: {e}")
 
     logger.info(f"Generated {len(plots)} model visualizations")
 

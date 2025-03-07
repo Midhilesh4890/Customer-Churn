@@ -1,0 +1,18 @@
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Applying feature engineering
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Creating tenure groups
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Created 6 tenure group features
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Creating service count feature
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Created service count feature
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Creating interaction features
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Created tenure to monthly charges ratio feature
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Interaction feature creation complete
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Feature engineering completed. Shape: (4930, 34)
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Applying feature engineering
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Creating tenure groups
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Created 6 tenure group features
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Creating service count feature
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Created service count feature
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Creating interaction features
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Created tenure to monthly charges ratio feature
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Interaction feature creation complete
+2025-03-08 04:11:13 - src.features.feature_engineering - INFO - Feature engineering completed. Shape: (2113, 34)

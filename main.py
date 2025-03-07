@@ -31,7 +31,8 @@ from src.models.model_factory import (
 )
 from src.evaluation.metrics import (
     calculate_metrics,
-    evaluate_model_by_segment
+    evaluate_model_by_segment,
+    get_classification_report
 )
 from src.visualization.eda_visualizer import generate_eda_visualizations
 from src.visualization.model_visualizer import generate_model_visualizations
@@ -66,6 +67,38 @@ def parse_args():
     )
 
     return parser.parse_args()
+
+
+def create_segment_mapping(X_original, X_processed, original_column):
+    """
+    Create a mapping between original categorical values and processed feature columns.
+    
+    Args:
+        X_original: Original features dataframe
+        X_processed: Processed features dataframe
+        original_column: Original categorical column name
+        
+    Returns:
+        Dict: Mapping from original values to processed column names
+    """
+    mapping = {}
+    unique_values = X_original[original_column].unique()
+
+    # Find corresponding columns in processed data
+    processed_columns = [
+        col for col in X_processed.columns if col.startswith(f"{original_column}_")]
+
+    # Create mapping
+    for value in unique_values:
+        # Find which processed column corresponds to this value
+        for col in processed_columns:
+            # Extract the value from the column name
+            col_value = col.replace(f"{original_column}_", "")
+            if col_value.replace("_", " ") == value or col_value == value:
+                mapping[value] = col
+                break
+
+    return mapping
 
 
 def main():
@@ -109,6 +142,9 @@ def main():
     # Split data
     X_train, X_test, y_train, y_test = split_data(df_cleaned)
 
+    # Save original test data for reference (before preprocessing)
+    X_test_original = X_test.copy()
+
     # Engineer features
     X_train = engineer_features(
         X_train, create_groups=True, create_counts=True, create_interactions=True)
@@ -121,6 +157,10 @@ def main():
 
     # Save processed data
     save_processed_data(X_train_processed, X_test_processed, y_train, y_test)
+
+    # Create mapping for segment analysis
+    contract_mapping = create_segment_mapping(
+        X_test_original, X_test_processed, "Contract")
 
     # Train and evaluate models
     models = {}
@@ -145,13 +185,42 @@ def main():
         feature_importance = get_feature_importance(
             model, X_train_processed.columns)
 
-        # Evaluate by segment
-        contract_segment_metrics = evaluate_model_by_segment(
-            model,
-            X_test,
-            y_test,
-            "Contract"
-        )
+        # Evaluate by contract type segment (using processed features and column names)
+        # We need to evaluate each contract type separately using the processed feature columns
+        contract_segment_metrics = {}
+
+        for contract_type, processed_col in contract_mapping.items():
+            # Create a segment mask for this contract type
+            segment_indices = X_test_processed[X_test_processed[processed_col] == 1].index
+
+            # Skip if no samples in this segment
+            if len(segment_indices) == 0:
+                continue
+
+            # Get segment data
+            X_segment = X_test_processed.loc[segment_indices]
+            y_segment = y_test.iloc[segment_indices] if isinstance(
+                y_test, pd.Series) else y_test[segment_indices]
+
+            # Make predictions
+            y_pred = model.predict(X_segment)
+
+            # Calculate probabilities if model supports it
+            if hasattr(model, 'predict_proba'):
+                y_prob = model.predict_proba(X_segment)[:, 1]
+                metrics = calculate_metrics(y_segment, y_pred, y_prob)
+            else:
+                metrics = calculate_metrics(y_segment, y_pred)
+
+            # Add churn rate
+            metrics['churn_rate'] = y_segment.mean()
+            metrics['count'] = len(y_segment)
+
+            # Store metrics for this segment
+            contract_segment_metrics[contract_type] = metrics
+
+            logger.info(
+                f"Segment {contract_type}: accuracy={metrics['accuracy']:.4f}, f1={metrics['f1']:.4f}, churn_rate={metrics['churn_rate']:.4f}, count={metrics['count']}")
 
         # Store results
         models[model_type] = model

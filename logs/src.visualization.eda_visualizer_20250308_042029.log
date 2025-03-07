@@ -1,0 +1,50 @@
+2025-03-08 04:20:29 - src.visualization.eda_visualizer - INFO - Generating EDA visualizations
+2025-03-08 04:20:29 - src.visualization.eda_visualizer - INFO - Plotting distribution of Churn
+2025-03-08 04:20:30 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\target_distribution.png
+2025-03-08 04:20:30 - src.visualization.eda_visualizer - INFO - Plotting relationship between categorical features and Churn
+2025-03-08 04:20:30 - src.visualization.eda_visualizer - INFO - Plotting gender vs Churn
+2025-03-08 04:20:31 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\gender_vs_Churn.png
+2025-03-08 04:20:31 - src.visualization.eda_visualizer - INFO - Plotting SeniorCitizen vs Churn
+2025-03-08 04:20:31 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\SeniorCitizen_vs_Churn.png
+2025-03-08 04:20:31 - src.visualization.eda_visualizer - INFO - Plotting Partner vs Churn
+2025-03-08 04:20:32 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\Partner_vs_Churn.png
+2025-03-08 04:20:32 - src.visualization.eda_visualizer - INFO - Plotting Dependents vs Churn
+2025-03-08 04:20:32 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\Dependents_vs_Churn.png
+2025-03-08 04:20:32 - src.visualization.eda_visualizer - INFO - Plotting PhoneService vs Churn
+2025-03-08 04:20:33 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\PhoneService_vs_Churn.png
+2025-03-08 04:20:33 - src.visualization.eda_visualizer - INFO - Plotting MultipleLines vs Churn
+2025-03-08 04:20:33 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\MultipleLines_vs_Churn.png
+2025-03-08 04:20:33 - src.visualization.eda_visualizer - INFO - Plotting InternetService vs Churn
+2025-03-08 04:20:34 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\InternetService_vs_Churn.png
+2025-03-08 04:20:34 - src.visualization.eda_visualizer - INFO - Plotting OnlineSecurity vs Churn
+2025-03-08 04:20:35 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\OnlineSecurity_vs_Churn.png
+2025-03-08 04:20:35 - src.visualization.eda_visualizer - INFO - Plotting OnlineBackup vs Churn
+2025-03-08 04:20:35 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\OnlineBackup_vs_Churn.png
+2025-03-08 04:20:35 - src.visualization.eda_visualizer - INFO - Plotting DeviceProtection vs Churn
+2025-03-08 04:20:36 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\DeviceProtection_vs_Churn.png
+2025-03-08 04:20:36 - src.visualization.eda_visualizer - INFO - Plotting TechSupport vs Churn
+2025-03-08 04:20:36 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\TechSupport_vs_Churn.png
+2025-03-08 04:20:36 - src.visualization.eda_visualizer - INFO - Plotting StreamingTV vs Churn
+2025-03-08 04:20:37 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\StreamingTV_vs_Churn.png
+2025-03-08 04:20:37 - src.visualization.eda_visualizer - INFO - Plotting StreamingMovies vs Churn
+2025-03-08 04:20:37 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\StreamingMovies_vs_Churn.png
+2025-03-08 04:20:37 - src.visualization.eda_visualizer - INFO - Plotting Contract vs Churn
+2025-03-08 04:20:38 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\Contract_vs_Churn.png
+2025-03-08 04:20:38 - src.visualization.eda_visualizer - INFO - Plotting PaperlessBilling vs Churn
+2025-03-08 04:20:39 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\PaperlessBilling_vs_Churn.png
+2025-03-08 04:20:39 - src.visualization.eda_visualizer - INFO - Plotting PaymentMethod vs Churn
+2025-03-08 04:20:39 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\categorical\PaymentMethod_vs_Churn.png
+2025-03-08 04:20:39 - src.visualization.eda_visualizer - INFO - Plotting relationship between numerical features and Churn
+2025-03-08 04:20:39 - src.visualization.eda_visualizer - INFO - Plotting tenure vs Churn
+2025-03-08 04:20:40 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\numerical\tenure_vs_Churn.png
+2025-03-08 04:20:40 - src.visualization.eda_visualizer - INFO - Plotting MonthlyCharges vs Churn
+2025-03-08 04:20:40 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\numerical\MonthlyCharges_vs_Churn.png
+2025-03-08 04:20:40 - src.visualization.eda_visualizer - INFO - Plotting TotalCharges vs Churn
+2025-03-08 04:20:41 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\numerical\TotalCharges_vs_Churn.png
+2025-03-08 04:20:41 - src.visualization.eda_visualizer - INFO - Plotting correlation matrix
+2025-03-08 04:20:42 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\correlation_matrix.png
+2025-03-08 04:20:42 - src.visualization.eda_visualizer - INFO - Plotting tenure distribution by Churn
+2025-03-08 04:20:43 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\tenure_distribution.png
+2025-03-08 04:20:43 - src.visualization.eda_visualizer - INFO - Plotting Churn rate by service subscription
+2025-03-08 04:20:44 - src.visualization.eda_visualizer - INFO - Saved plot to D:\Projects\Customer-Churn\visualizations\eda\service_distribution.png
+2025-03-08 04:20:44 - src.visualization.eda_visualizer - INFO - Generated 23 EDA visualizations

@@ -1,0 +1,39 @@
+2025-03-08 04:20:44 - src.models.model_factory - INFO - Creating lr model
+2025-03-08 04:20:44 - src.models.model_factory - INFO - Training LogisticRegression model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Model training completed
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Saving model to D:\Projects\Customer-Churn\models\lr_model.joblib
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Model saved successfully
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Evaluating LogisticRegression model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Model evaluation results: {'accuracy': 0.7444391859914813, 'precision': 0.5120274914089347, 'recall': 0.7967914438502673, 'f1_score': 0.6234309623430961, 'auc': 0.8445310059356451, 'true_negatives': 1126, 'false_positives': 426, 'false_negatives': 114, 'true_positives': 447}
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Extracting feature importance from LogisticRegression model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Feature importance extracted successfully
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Creating dt model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Training DecisionTreeClassifier model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Model training completed
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Saving model to D:\Projects\Customer-Churn\models\dt_model.joblib
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Model saved successfully
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Evaluating DecisionTreeClassifier model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Model evaluation results: {'accuracy': 0.7155702792238523, 'precision': 0.4782135076252723, 'recall': 0.7825311942959001, 'f1_score': 0.5936443542934415, 'auc': 0.8248060119080434, 'true_negatives': 1073, 'false_positives': 479, 'false_negatives': 122, 'true_positives': 439}
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Extracting feature importance from DecisionTreeClassifier model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Feature importance extracted successfully
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Creating rf model
+2025-03-08 04:20:45 - src.models.model_factory - INFO - Training RandomForestClassifier model
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Model training completed
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Saving model to D:\Projects\Customer-Churn\models\rf_model.joblib
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Model saved successfully
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Evaluating RandomForestClassifier model
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Model evaluation results: {'accuracy': 0.738760056791292, 'precision': 0.5050055617352615, 'recall': 0.8092691622103387, 'f1_score': 0.6219178082191782, 'auc': 0.8399408732565192, 'true_negatives': 1107, 'false_positives': 445, 'false_negatives': 107, 'true_positives': 454}
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Extracting feature importance from RandomForestClassifier model
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Feature importance extracted successfully
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Creating ensemble model
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Creating lr model
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Creating dt model
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Creating rf model
+2025-03-08 04:20:49 - src.models.model_factory - INFO - Training VotingClassifier model
+2025-03-08 04:21:01 - src.models.model_factory - INFO - Model training completed
+2025-03-08 04:21:01 - src.models.model_factory - INFO - Saving model to D:\Projects\Customer-Churn\models\ensemble_model.joblib
+2025-03-08 04:21:01 - src.models.model_factory - INFO - Model saved successfully
+2025-03-08 04:21:01 - src.models.model_factory - INFO - Evaluating VotingClassifier model
+2025-03-08 04:21:01 - src.models.model_factory - INFO - Model evaluation results: {'accuracy': 0.7392333175579744, 'precision': 0.5056053811659192, 'recall': 0.803921568627451, 'f1_score': 0.6207845836200964, 'auc': None, 'true_negatives': 1111, 'false_positives': 441, 'false_negatives': 110, 'true_positives': 451}
+2025-03-08 04:21:01 - src.models.model_factory - INFO - Extracting feature importance from VotingClassifier model
+2025-03-08 04:21:01 - src.models.model_factory - INFO - Feature importance extracted successfully
