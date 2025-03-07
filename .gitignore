@@ -1,10 +1,38 @@
-# Python-generated files
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+*.py[cod]
+*$py.class
 
-# Virtual environments
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+coverage.xml
+*.cover
+
+# Environments
+.env
 .venv
+env/
+venv/
+ENV/
+
+# Project specific
+logs/
+models/
+results/
+visualizations/
+
+# Data files
+*.csv
+*.xlsx
+*.xls
+*.db
+logs

@@ -1,0 +1,11 @@
+.git
+.github
+.gitignore
+**/__pycache__
+**/*.pyc
+venv
+.env
+logs/
+models/
+results/
+visualizations/
