@@ -255,3 +255,19 @@ def get_ensemble_feature_importance(
                 'feature': feature_names,
                 'importance': importances
             })
+
+            # Sort by importance
+            feature_importance = feature_importance.sort_values(
+                'importance', ascending=False)
+        else:
+            logger.warning(
+                "Could not extract feature importance from voting classifier")
+            return pd.DataFrame()
+    else:
+        logger.warning(
+            f"Model {type(model).__name__} does not support feature importance")
+        return pd.DataFrame()
+
+    logger.info("Feature importance extracted successfully")
+
+    return feature_importance

@@ -50,8 +50,8 @@ churn_prediction/
 1. Clone the repository:
 
 ```
-git clone <repository-url>
-cd churn_prediction
+git clone https://github.com/Midhilesh4890/Customer-Churn
+cd customer-churn
 ```
 
 2. Create a virtual environment:
@@ -61,16 +61,9 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install the required packages:
-
-```
-pip install -r requirements.txt
-pip install -e .
-```
-
 ## Usage
 
-1. Place the Telco Customer Churn dataset in `data/raw/data.csv`
+1. Telco Customer Churn dataset in `data/raw/data.csv`
 
 2. Run the main pipeline:
 
@@ -78,30 +71,8 @@ pip install -e .
 python main.py
 ```
 
-3. For exploratory data analysis, run the Jupyter notebook:
-
-```
-jupyter notebook notebooks/exploratory_data_analysis.ipynb
-```
-
 ## Models
-
-The project implements the following models:
-
 - Logistic Regression
 - Decision Tree
 - Random Forest
 - Ensemble (voting classifier)
-
-## Results
-
-The best-performing model achieved 79.0% accuracy with an F1 score of 61.0%. Key predictors of churn include:
-
-- Contract type (month-to-month customers more likely to churn)
-- Tenure (newer customers more likely to churn)
-- Internet service type (fiber optic customers more likely to churn)
-- Whether customers have online security and tech support services
-
-## License
-
-[MIT](LICENSE)
