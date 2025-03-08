@@ -12,6 +12,7 @@ from sklearn.metrics import roc_curve, precision_recall_curve, auc
 
 from src.utils.logger import get_logger
 from src.config import VISUALIZATIONS_DIR
+from src.pipeline.base import PipelineComponent
 
 logger = get_logger(__name__)
 
@@ -466,3 +467,218 @@ def plot_confusion_matrices_at_thresholds(
         logger.info(f"Saved confusion matrices at thresholds plot to {output_path}")
 
     return fig
+
+
+def plot_model_comparison(
+    metrics_dict: Dict[str, Dict[str, float]],
+    metrics_to_plot: List[str] = ["accuracy", "precision", "recall", "f1_score", "auc"],
+    title: str = "Model Performance Comparison",
+    output_path: Optional[Union[str, Path]] = None,
+    figsize: Tuple[int, int] = (14, 10),
+    sort_by: Optional[str] = "f1_score",
+    ascending: bool = False,
+) -> plt.Figure:
+    """
+    Create a comprehensive visualization comparing multiple models across different metrics.
+
+    Args:
+        metrics_dict: Dictionary with model names as keys and dictionaries of metrics as values
+        metrics_to_plot: List of metric names to include in the visualization
+        title: Title for the figure
+        output_path: Path to save the figure
+        figsize: Figure size as (width, height)
+        sort_by: Metric to sort the models by (or None for no sorting)
+        ascending: Whether to sort in ascending order
+
+    Returns:
+        matplotlib.figure.Figure: The created figure
+    """
+    logger.info("Plotting model comparison visualization")
+
+    # Set plot style
+    set_visualization_style()
+
+    # Prepare data for plotting
+    data = []
+    for model_name, metrics in metrics_dict.items():
+        for metric_name, value in metrics.items():
+            if metric_name in metrics_to_plot and isinstance(value, (int, float)):
+                data.append(
+                    {
+                        "Model": model_name,
+                        "Metric": metric_name.replace("_score", "").capitalize(),
+                        "Value": value,
+                    }
+                )
+
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+
+    # Check if we have data to plot
+    if df.empty:
+        logger.warning("No valid metrics data found for comparison visualization")
+        fig = plt.figure(figsize=figsize)
+        plt.text(
+            0.5,
+            0.5,
+            "No valid metrics data available for comparison",
+            ha="center",
+            va="center",
+            fontsize=14,
+        )
+        plt.tight_layout()
+        return fig
+
+    # Sort models if requested
+    if (
+        sort_by is not None
+        and sort_by.replace("_score", "").capitalize() in df["Metric"].unique()
+    ):
+        sort_metric = sort_by.replace("_score", "").capitalize()
+        model_order = (
+            df[df["Metric"] == sort_metric]
+            .sort_values("Value", ascending=ascending)["Model"]
+            .unique()
+        )
+        # Create a categorical type with the desired order
+        df["Model"] = pd.Categorical(df["Model"], categories=model_order, ordered=True)
+        df = df.sort_values("Model")
+
+    # Create figure with multiple plots
+    fig = plt.figure(figsize=figsize)
+
+    # 1. Main bar plot showing all metrics by model
+    ax1 = plt.subplot2grid((3, 3), (0, 0), colspan=2, rowspan=2)
+    sns.barplot(x="Model", y="Value", hue="Metric", data=df, ax=ax1)
+    ax1.set_title(f"{title}", fontsize=16)
+    ax1.set_xlabel("Model", fontsize=14)
+    ax1.set_ylabel("Score", fontsize=14)
+    ax1.set_ylim(0, 1.05)
+    ax1.legend(title="Metric", bbox_to_anchor=(1.05, 1), loc="upper left")
+    ax1.set_xticklabels(ax1.get_xticklabels(), rotation=45, ha="right")
+
+    # 2. Heatmap showing all metrics by model
+    ax2 = plt.subplot2grid((3, 3), (0, 2), rowspan=2)
+    pivot_df = df.pivot(index="Model", columns="Metric", values="Value")
+    sns.heatmap(pivot_df, annot=True, cmap="YlGnBu", fmt=".3f", cbar=False, ax=ax2)
+    ax2.set_title("Heatmap View", fontsize=14)
+
+    # 3. Spider/Radar chart
+    ax3 = plt.subplot2grid((3, 3), (2, 0), colspan=3, polar=True)
+
+    # Prepare radar chart data
+    metrics = df["Metric"].unique()
+    N = len(metrics)
+
+    # Create angles for each metric
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    angles += angles[:1]  # Close the loop
+
+    # Set up spider chart
+    ax3.set_theta_offset(np.pi / 2)
+    ax3.set_theta_direction(-1)
+
+    # Add labels to the angles
+    plt.xticks(angles[:-1], metrics)
+
+    # Set y-limits
+    ax3.set_ylim(0, 1)
+
+    # Plot each model
+    for model_name in df["Model"].unique():
+        model_df = df[df["Model"] == model_name]
+        values = []
+        for metric in metrics:
+            value_series = model_df[model_df["Metric"] == metric]["Value"]
+            if len(value_series) > 0:
+                values.append(value_series.values[0])
+            else:
+                values.append(0)  # Default value if metric is missing
+        values += values[:1]  # Close the loop
+
+        # Plot the model
+        ax3.plot(angles, values, linewidth=2, label=model_name)
+        ax3.fill(angles, values, alpha=0.1)
+
+    ax3.set_title("Radar Comparison", fontsize=14)
+    ax3.legend(loc="lower right", bbox_to_anchor=(1.2, 0))
+
+    plt.tight_layout()
+
+    # Save plot if output path is provided
+    if output_path:
+        plt.savefig(output_path, dpi=300, bbox_inches="tight")
+        logger.info(f"Saved model comparison visualization to {output_path}")
+
+    return fig
+
+
+class ModelComparisonComponent(PipelineComponent):
+    """Component for generating model comparison visualization using real pipeline metrics."""
+
+    def __init__(self, output_dir: Union[str, Path] = VISUALIZATIONS_DIR):
+        """Initialize the model comparison component."""
+        super().__init__(name="model_comparison")
+        self.output_dir = Path(output_dir)
+
+    @PipelineComponent.log_execution_time
+    def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Generate model comparison visualization using real metrics.
+
+        Args:
+            data: Dictionary containing data from previous pipeline stages,
+                  including metrics from model evaluation.
+
+        Returns:
+            Dict: Dictionary with model comparison visualization added.
+        """
+        self.logger.info("Generating model comparison visualization with real metrics")
+
+        # Try to locate metrics in the data
+        metrics = data.get("metrics", {})
+
+        # If not found directly, check inside model_pipeline results
+        if not metrics and "model_pipeline" in data:
+            model_pipeline_data = data["model_pipeline"]
+            if isinstance(model_pipeline_data, dict):
+                metrics = model_pipeline_data.get("metrics", {})
+
+        # If still not found, look in the model_trainer component results
+        if not metrics and "model_trainer" in data:
+            metrics = data["model_trainer"].get("metrics", {})
+
+        # Check if we found metrics to plot
+        if not metrics:
+            self.logger.warning("No metrics found for model comparison visualization")
+            return data
+
+        self.logger.info(f"Found metrics for {len(metrics)} models")
+
+        # Create output directory if it doesn't exist
+        comparison_dir = self.output_dir / "comparison"
+        comparison_dir.mkdir(parents=True, exist_ok=True)
+
+        try:
+            # Generate comparison visualization
+            comparison_fig = plot_model_comparison(
+                metrics,
+                title="Churn Prediction Model Comparison",
+                output_path=comparison_dir / "model_comparison.png",
+                sort_by="f1_score",
+            )
+
+            # Create a new result dictionary with visualization added
+            result = data.copy()
+            result["model_comparison_fig"] = comparison_fig
+
+            self.logger.info("Model comparison visualization generated successfully")
+
+            return result
+
+        except Exception as e:
+            self.logger.error(f"Error generating model comparison visualization: {e}")
+            import traceback
+
+            self.logger.error(traceback.format_exc())
+            return data

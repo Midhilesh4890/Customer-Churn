@@ -15,6 +15,7 @@ from src.visualization.advanced_model_visualizer import (
     plot_threshold_analysis,
     plot_optimal_thresholds,
     plot_confusion_matrices_at_thresholds,
+    ModelComparisonComponent,
 )
 from src.config import (
     VISUALIZATIONS_DIR,
@@ -385,6 +386,10 @@ class VisualizationPipeline(PipelineComponent):
 
         self.model_viz = ModelVisualizationComponent(output_dir=output_dir)
         self.components.append(self.model_viz)
+
+        # Add the new model comparison component
+        self.model_comparison = ModelComparisonComponent(output_dir=output_dir)
+        self.components.append(self.model_comparison)
 
     @PipelineComponent.log_execution_time
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
