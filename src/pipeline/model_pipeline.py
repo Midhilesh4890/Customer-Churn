@@ -13,7 +13,7 @@ from src.models.model_factory import (
     train_model,
     evaluate_model,
     get_feature_importance,
-    save_model
+    save_model,
 )
 from src.config import MODELS_DIR
 
@@ -27,11 +27,11 @@ class ModelTrainerComponent(PipelineComponent):
         self,
         models_to_train: List[str] = None,
         save_models: bool = True,
-        output_dir: Union[str, Path] = MODELS_DIR
+        output_dir: Union[str, Path] = MODELS_DIR,
     ):
         """
         Initialize the model trainer component.
-        
+
         Args:
             models_to_train: List of model types to train ('lr', 'dt', 'rf', 'ensemble').
                             If None, will train all models.
@@ -39,8 +39,7 @@ class ModelTrainerComponent(PipelineComponent):
             output_dir: Directory to save the model files.
         """
         super().__init__(name="model_trainer")
-        self.models_to_train = models_to_train or [
-            "lr", "dt", "rf", "ensemble"]
+        self.models_to_train = models_to_train or ["lr", "dt", "rf", "ensemble"]
         self.save_models = save_models
         self.output_dir = Path(output_dir)
 
@@ -48,10 +47,10 @@ class ModelTrainerComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Create and train models.
-        
+
         Args:
             data: Dictionary containing processed data.
-            
+
         Returns:
             Dict: Dictionary with trained models, metrics, etc.
         """
@@ -63,8 +62,12 @@ class ModelTrainerComponent(PipelineComponent):
         y_train = data.get("y_train")
         y_test = data.get("y_test")
 
-        if (X_train_processed is None or X_test_processed is None or
-                y_train is None or y_test is None):
+        if (
+            X_train_processed is None
+            or X_test_processed is None
+            or y_train is None
+            or y_test is None
+        ):
             self.logger.error("Required data not found in input dictionary")
             return data
 
@@ -93,14 +96,17 @@ class ModelTrainerComponent(PipelineComponent):
             if hasattr(model, "predict_proba"):
                 try:
                     y_prob_dict[model_type] = model.predict_proba(X_test_processed)[
-                        :, 1]
+                        :, 1
+                    ]
                 except Exception as e:
                     self.logger.warning(
-                        f"Could not get probabilities for {model_type}: {e}")
+                        f"Could not get probabilities for {model_type}: {e}"
+                    )
 
             # Get feature importance
             feature_importance = get_feature_importance(
-                model, X_train_processed.columns)
+                model, X_train_processed.columns
+            )
 
             # Store results
             models[model_type] = model
@@ -131,7 +137,7 @@ class SegmentEvaluationComponent(PipelineComponent):
     def __init__(self, segment_column: str = "Contract"):
         """
         Initialize the segment evaluation component.
-        
+
         Args:
             segment_column: Column to segment by.
         """
@@ -142,16 +148,16 @@ class SegmentEvaluationComponent(PipelineComponent):
     def evaluate_segment(
         model: BaseEstimator,
         X_segment: pd.DataFrame,
-        y_segment: Union[pd.Series, np.ndarray]
+        y_segment: Union[pd.Series, np.ndarray],
     ) -> Dict[str, float]:
         """
         Evaluate a model on a specific segment.
-        
+
         Args:
             model: Trained model to evaluate.
             X_segment: Features for the segment.
             y_segment: Labels for the segment.
-            
+
         Returns:
             Dict: Dictionary of evaluation metrics.
         """
@@ -180,15 +186,14 @@ class SegmentEvaluationComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Evaluate models by segment.
-        
+
         Args:
             data: Dictionary containing trained models and processed data.
-            
+
         Returns:
             Dict: Dictionary with segment evaluation results added.
         """
-        self.logger.info(
-            f"Evaluating models by segment: {self.segment_column}")
+        self.logger.info(f"Evaluating models by segment: {self.segment_column}")
 
         # Get the required data
         models = data.get("models", {})
@@ -206,7 +211,8 @@ class SegmentEvaluationComponent(PipelineComponent):
 
         if not contract_mapping:
             self.logger.warning(
-                f"No mapping found for segment column: {self.segment_column}")
+                f"No mapping found for segment column: {self.segment_column}"
+            )
             return data
 
         # Dictionary to store segment evaluation results
@@ -272,11 +278,11 @@ class ModelPipeline(PipelineComponent):
         models_to_train: List[str] = None,
         save_models: bool = True,
         output_dir: Union[str, Path] = MODELS_DIR,
-        segment_column: str = "Contract"
+        segment_column: str = "Contract",
     ):
         """
         Initialize the model pipeline.
-        
+
         Args:
             models_to_train: List of model types to train.
             save_models: Whether to save trained models to disk.
@@ -289,7 +295,7 @@ class ModelPipeline(PipelineComponent):
         self.model_trainer = ModelTrainerComponent(
             models_to_train=models_to_train,
             save_models=save_models,
-            output_dir=output_dir
+            output_dir=output_dir,
         )
 
         self.segment_evaluation = SegmentEvaluationComponent(
@@ -300,10 +306,10 @@ class ModelPipeline(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Run the complete model pipeline.
-        
+
         Args:
             data: Dictionary containing data from previous pipelines.
-            
+
         Returns:
             Dict: Dictionary with trained models and evaluation results.
         """

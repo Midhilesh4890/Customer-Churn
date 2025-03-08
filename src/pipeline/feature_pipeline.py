@@ -11,7 +11,7 @@ from src.features.feature_engineering import (
     create_tenure_groups,
     create_service_count,
     create_interaction_features,
-    select_features
+    select_features,
 )
 from src.config import SELECTED_FEATURES
 
@@ -27,11 +27,11 @@ class FeatureEngineeringComponent(PipelineComponent):
         create_counts: bool = True,
         create_interactions: bool = True,
         select: bool = False,
-        selected_features: List[str] = SELECTED_FEATURES
+        selected_features: List[str] = SELECTED_FEATURES,
     ):
         """
         Initialize the feature engineering component.
-        
+
         Args:
             create_groups: Whether to create tenure groups.
             create_counts: Whether to create service count features.
@@ -50,10 +50,10 @@ class FeatureEngineeringComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Engineer features for the data.
-        
+
         Args:
             data: Dictionary containing data from previous pipeline stages.
-            
+
         Returns:
             Dict: Dictionary with engineered features added.
         """
@@ -90,7 +90,7 @@ class FeatureEngineeringComponent(PipelineComponent):
             create_counts=self.create_counts,
             create_interactions=self.create_interactions,
             select=self.select,
-            selected_features=self.selected_features
+            selected_features=self.selected_features,
         )
 
         X_test_engineered = engineer_features(
@@ -99,7 +99,7 @@ class FeatureEngineeringComponent(PipelineComponent):
             create_counts=self.create_counts,
             create_interactions=self.create_interactions,
             select=self.select,
-            selected_features=self.selected_features
+            selected_features=self.selected_features,
         )
 
         # Create a new result dictionary with engineered features
@@ -112,14 +112,14 @@ class FeatureEngineeringComponent(PipelineComponent):
 
 class SegmentMappingComponent(PipelineComponent):
     """
-    Component for creating segment mappings between original categorical values 
+    Component for creating segment mappings between original categorical values
     and processed feature columns.
     """
 
     def __init__(self, categorical_columns: List[str] = None):
         """
         Initialize the segment mapping component.
-        
+
         Args:
             categorical_columns: List of categorical columns to create mappings for.
                                 If None, will use ["Contract"] by default.
@@ -164,10 +164,10 @@ class SegmentMappingComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Create segment mappings for the data.
-        
+
         Args:
             data: Dictionary containing original and processed data.
-            
+
         Returns:
             Dict: Dictionary with segment mappings added.
         """
@@ -191,8 +191,7 @@ class SegmentMappingComponent(PipelineComponent):
         # For X_test_processed, use X_test as fallback
         if X_test_processed is None:
             X_test_processed = data.get("X_test")
-            self.logger.warning(
-                "Using X_test as fallback for X_test_processed")
+            self.logger.warning("Using X_test as fallback for X_test_processed")
 
         if X_test_original is None or X_test_processed is None:
             self.logger.warning(
@@ -211,8 +210,7 @@ class SegmentMappingComponent(PipelineComponent):
                 segment_mappings[column] = mapping
                 self.logger.info(f"Created mapping for {column}: {mapping}")
             else:
-                self.logger.warning(
-                    f"Column {column} not found in X_test_original")
+                self.logger.warning(f"Column {column} not found in X_test_original")
 
         # Create a new result dictionary with segment mappings
         result = data.copy()
@@ -233,11 +231,11 @@ class FeaturePipeline(PipelineComponent):
         create_interactions: bool = True,
         select: bool = False,
         selected_features: List[str] = SELECTED_FEATURES,
-        categorical_columns: List[str] = None
+        categorical_columns: List[str] = None,
     ):
         """
         Initialize the feature pipeline.
-        
+
         Args:
             create_groups: Whether to create tenure groups.
             create_counts: Whether to create service count features.
@@ -254,7 +252,7 @@ class FeaturePipeline(PipelineComponent):
             create_counts=create_counts,
             create_interactions=create_interactions,
             select=select,
-            selected_features=selected_features
+            selected_features=selected_features,
         )
 
         self.segment_mapping = SegmentMappingComponent(
@@ -265,10 +263,10 @@ class FeaturePipeline(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Run the complete feature pipeline.
-        
+
         Args:
             data: Dictionary containing data from the data pipeline.
-            
+
         Returns:
             Dict: Dictionary with engineered features and segment mappings.
         """

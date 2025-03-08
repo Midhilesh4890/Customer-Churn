@@ -14,10 +14,7 @@ from src.models.cross_validation import (
     analyze_threshold_performance,
     get_optimal_threshold_by_metric,
 )
-from src.evaluation.metrics import (
-    calculate_metrics,
-    get_classification_report
-)
+from src.evaluation.metrics import calculate_metrics, get_classification_report
 from src.config import RANDOM_STATE
 
 
@@ -29,7 +26,7 @@ class CrossValidationComponent(PipelineComponent):
     def __init__(self, n_splits: int = 5, random_state: int = RANDOM_STATE):
         """
         Initialize the cross-validation component.
-        
+
         Args:
             n_splits: Number of folds for cross-validation.
             random_state: Random seed for reproducibility.
@@ -42,10 +39,10 @@ class CrossValidationComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Perform cross-validation on models.
-        
+
         Args:
             data: Dictionary containing trained models and data.
-            
+
         Returns:
             Dict: Dictionary with cross-validation results added.
         """
@@ -99,22 +96,21 @@ class ThresholdOptimizerComponent(PipelineComponent):
     def __init__(self, metrics: List[str] = None):
         """
         Initialize the threshold optimizer component.
-        
+
         Args:
             metrics: List of metrics to optimize thresholds for.
         """
         super().__init__(name="threshold_optimizer")
-        self.metrics = metrics or [
-            "f1", "precision", "recall", "balanced_accuracy"]
+        self.metrics = metrics or ["f1", "precision", "recall", "balanced_accuracy"]
 
     @PipelineComponent.log_execution_time
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Optimize probability thresholds for models.
-        
+
         Args:
             data: Dictionary containing trained models and data.
-            
+
         Returns:
             Dict: Dictionary with threshold optimization results added.
         """
@@ -128,8 +124,7 @@ class ThresholdOptimizerComponent(PipelineComponent):
         X_test_original = data.get("X_test_original")
 
         if not y_prob_dict or y_test is None:
-            self.logger.warning(
-                "Required data not found for threshold optimization")
+            self.logger.warning("Required data not found for threshold optimization")
             return data
 
         # Dictionary to store threshold results
@@ -147,8 +142,7 @@ class ThresholdOptimizerComponent(PipelineComponent):
 
             try:
                 # Analyze thresholds
-                model_threshold_results = analyze_threshold_performance(
-                    y_test, y_prob)
+                model_threshold_results = analyze_threshold_performance(y_test, y_prob)
                 threshold_results[model_name] = model_threshold_results
 
                 # Store optimal thresholds for each metric
@@ -161,7 +155,7 @@ class ThresholdOptimizerComponent(PipelineComponent):
 
                     model_optimal_thresholds[metric] = {
                         "threshold": optimal_threshold,
-                        "score": optimal_score
+                        "score": optimal_score,
                     }
 
                     self.logger.info(
@@ -193,7 +187,8 @@ class ThresholdOptimizerComponent(PipelineComponent):
 
             except Exception as e:
                 self.logger.error(
-                    f"Error during threshold analysis for {model_name}: {e}")
+                    f"Error during threshold analysis for {model_name}: {e}"
+                )
 
         # Create a new result dictionary with threshold optimization results
         result = data.copy()
@@ -212,11 +207,11 @@ class TestPredictionsComponent(PipelineComponent):
     def __init__(
         self,
         output_dir: Union[str, Path] = Path("results"),
-        customer_id_column: str = "customerID"
+        customer_id_column: str = "customerID",
     ):
         """
         Initialize the test predictions component.
-        
+
         Args:
             output_dir: Directory to save the prediction results.
             customer_id_column: Name of the customer ID column.
@@ -229,10 +224,10 @@ class TestPredictionsComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Generate and save test set predictions.
-        
+
         Args:
             data: Dictionary containing trained models and data.
-            
+
         Returns:
             Dict: Dictionary with test prediction results added.
         """
@@ -257,16 +252,17 @@ class TestPredictionsComponent(PipelineComponent):
 
         # Create DataFrame with customer IDs and true labels
         if self.customer_id_column in X_test_original.columns:
-            results_df = pd.DataFrame({
-                "CustomerID": X_test_original[self.customer_id_column],
-                "True_Churn": y_test
-            })
+            results_df = pd.DataFrame(
+                {
+                    "CustomerID": X_test_original[self.customer_id_column],
+                    "True_Churn": y_test,
+                }
+            )
         else:
             # Create index-based customer IDs if customer ID column doesn't exist
-            results_df = pd.DataFrame({
-                "Index": range(len(y_test)),
-                "True_Churn": y_test
-            })
+            results_df = pd.DataFrame(
+                {"Index": range(len(y_test)), "True_Churn": y_test}
+            )
 
         # Add predictions from each model
         for model_name, model in all_models.items():
@@ -286,6 +282,7 @@ class TestPredictionsComponent(PipelineComponent):
 
         # Save to CSV
         import time
+
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         csv_path = self.output_dir / f"test_predictions_{timestamp}.csv"
         results_df.to_csv(csv_path, index=False)
@@ -302,7 +299,7 @@ class TestPredictionsComponent(PipelineComponent):
 
 class EvaluationPipeline(PipelineComponent):
     """
-    End-to-end evaluation pipeline that combines cross-validation, 
+    End-to-end evaluation pipeline that combines cross-validation,
     threshold optimization, and test predictions.
     """
 
@@ -313,11 +310,11 @@ class EvaluationPipeline(PipelineComponent):
         run_threshold_opt: bool = True,
         metrics: List[str] = None,
         output_dir: Union[str, Path] = Path("results"),
-        customer_id_column: str = "customerID"
+        customer_id_column: str = "customerID",
     ):
         """
         Initialize the evaluation pipeline.
-        
+
         Args:
             run_cv: Whether to run cross-validation.
             n_splits: Number of folds for cross-validation.
@@ -340,8 +337,7 @@ class EvaluationPipeline(PipelineComponent):
             self.components.append(self.threshold_opt)
 
         self.test_predictions = TestPredictionsComponent(
-            output_dir=output_dir,
-            customer_id_column=customer_id_column
+            output_dir=output_dir, customer_id_column=customer_id_column
         )
         self.components.append(self.test_predictions)
 
@@ -349,10 +345,10 @@ class EvaluationPipeline(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Run the complete evaluation pipeline.
-        
+
         Args:
             data: Dictionary containing data from previous pipelines.
-            
+
         Returns:
             Dict: Dictionary with evaluation results.
         """

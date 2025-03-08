@@ -33,8 +33,7 @@ def parse_args():
         help="Models to train",
     )
 
-    parser.add_argument("--skip_cv", action="store_true",
-                        help="Skip cross-validation")
+    parser.add_argument("--skip_cv", action="store_true", help="Skip cross-validation")
 
     parser.add_argument(
         "--cv_folds", type=int, default=5, help="Number of cross-validation folds"
@@ -49,7 +48,9 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--skip_saving_data", action="store_true", help="Skip saving processed data to disk"
+        "--skip_saving_data",
+        action="store_true",
+        help="Skip saving processed data to disk",
     )
 
     return parser.parse_args()
@@ -79,7 +80,7 @@ def main():
         cv_folds=args.cv_folds,
         run_threshold_opt=not args.skip_threshold,
         save_models=not args.skip_saving_models,
-        save_output=not args.skip_saving_data
+        save_output=not args.skip_saving_data,
     )
 
     # Run the pipeline
@@ -88,8 +89,7 @@ def main():
     # Calculate and print execution time
     end_time = time.time()
     execution_time = end_time - start_time
-    logger.info(
-        f"Pipeline execution completed in {execution_time:.2f} seconds")
+    logger.info(f"Pipeline execution completed in {execution_time:.2f} seconds")
 
     # Return the results for potential further processing
     return results

@@ -20,7 +20,7 @@ from src.config import (
     VISUALIZATIONS_DIR,
     CATEGORICAL_FEATURES,
     NUMERICAL_FEATURES,
-    TARGET
+    TARGET,
 )
 
 
@@ -35,11 +35,11 @@ class EDAVisualizationComponent(PipelineComponent):
         numerical_columns: List[str] = NUMERICAL_FEATURES,
         service_columns: List[str] = None,
         target_column: str = TARGET,
-        output_dir: Union[str, Path] = VISUALIZATIONS_DIR
+        output_dir: Union[str, Path] = VISUALIZATIONS_DIR,
     ):
         """
         Initialize the EDA visualization component.
-        
+
         Args:
             categorical_columns: List of categorical column names.
             numerical_columns: List of numerical column names.
@@ -73,10 +73,10 @@ class EDAVisualizationComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Generate EDA visualizations.
-        
+
         Args:
             data: Dictionary containing cleaned data.
-            
+
         Returns:
             Dict: Dictionary with EDA visualization results added.
         """
@@ -113,8 +113,7 @@ class EDAVisualizationComponent(PipelineComponent):
         # As a last resort, check if we received the original DataLoader component output
         if df_cleaned is None and isinstance(data, pd.DataFrame):
             df_cleaned = data
-            self.logger.info(
-                "Using DataFrame passed directly for EDA visualizations")
+            self.logger.info("Using DataFrame passed directly for EDA visualizations")
 
         # If we still don't have data, log an error and return
         if df_cleaned is None:
@@ -124,27 +123,39 @@ class EDAVisualizationComponent(PipelineComponent):
         # Check if the target column exists in the DataFrame
         if self.target_column not in df_cleaned.columns:
             # Try to find an alternative target column
-            alternative_targets = ["Churn_Binary",
-                                   "target", "Target", "label", "Label", "y"]
+            alternative_targets = [
+                "Churn_Binary",
+                "target",
+                "Target",
+                "label",
+                "Label",
+                "y",
+            ]
             for alt_target in alternative_targets:
                 if alt_target in df_cleaned.columns:
                     self.logger.info(
-                        f"Target column '{self.target_column}' not found, using '{alt_target}' instead")
+                        f"Target column '{self.target_column}' not found, using '{alt_target}' instead"
+                    )
                     self.target_column = alt_target
                     break
             else:
                 # If we get here, none of the alternative targets were found
                 self.logger.error(
-                    f"Target column '{self.target_column}' not found in data")
+                    f"Target column '{self.target_column}' not found in data"
+                )
 
                 # Try to get data from the raw cleaned data which should have the target
                 original_data = data.get("data_pipeline", {})
                 if isinstance(original_data, dict):
                     original_df = original_data.get("data_cleaner")
-                    if isinstance(original_df, pd.DataFrame) and self.target_column in original_df.columns:
+                    if (
+                        isinstance(original_df, pd.DataFrame)
+                        and self.target_column in original_df.columns
+                    ):
                         df_cleaned = original_df
                         self.logger.info(
-                            f"Using original cleaned data with target column '{self.target_column}'")
+                            f"Using original cleaned data with target column '{self.target_column}'"
+                        )
                     else:
                         return data
                 else:
@@ -158,7 +169,7 @@ class EDAVisualizationComponent(PipelineComponent):
                 self.numerical_columns,
                 self.service_columns,
                 self.target_column,
-                self.output_dir
+                self.output_dir,
             )
 
             # Create a new result dictionary with EDA visualization results
@@ -170,6 +181,7 @@ class EDAVisualizationComponent(PipelineComponent):
         except Exception as e:
             self.logger.error(f"Error generating EDA visualizations: {e}")
             import traceback
+
             self.logger.error(traceback.format_exc())
             return data
 
@@ -182,7 +194,7 @@ class ModelVisualizationComponent(PipelineComponent):
     def __init__(self, output_dir: Union[str, Path] = VISUALIZATIONS_DIR):
         """
         Initialize the model visualization component.
-        
+
         Args:
             output_dir: Directory to save the plots.
         """
@@ -193,10 +205,10 @@ class ModelVisualizationComponent(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Generate model performance visualizations.
-        
+
         Args:
             data: Dictionary containing model evaluation results.
-            
+
         Returns:
             Dict: Dictionary with model visualization results added.
         """
@@ -241,16 +253,16 @@ class ModelVisualizationComponent(PipelineComponent):
             try:
                 cv_plot = plot_cv_results(
                     cv_comparison_df,
-                    output_path=self.output_dir / "cross_validation_results.png"
+                    output_path=self.output_dir / "cross_validation_results.png",
                 )
                 visualization_results["cv_plot"] = cv_plot
                 self.logger.info("Generated cross-validation results plot")
             except Exception as e:
-                self.logger.error(
-                    f"Error plotting cross-validation results: {e}")
+                self.logger.error(f"Error plotting cross-validation results: {e}")
         else:
             self.logger.warning(
-                "Cross-validation results not available for visualization")
+                "Cross-validation results not available for visualization"
+            )
 
         # Plot ROC and PR curves if probability predictions are available
         if y_prob_dict and y_test is not None:
@@ -259,7 +271,7 @@ class ModelVisualizationComponent(PipelineComponent):
                 roc_plot = plot_multiple_roc_curves(
                     y_test,
                     y_prob_dict,
-                    output_path=self.output_dir / "roc_curves_comparison.png"
+                    output_path=self.output_dir / "roc_curves_comparison.png",
                 )
                 visualization_results["roc_plot"] = roc_plot
                 self.logger.info("Generated ROC curves comparison plot")
@@ -268,7 +280,7 @@ class ModelVisualizationComponent(PipelineComponent):
                 pr_plot = plot_multiple_pr_curves(
                     y_test,
                     y_prob_dict,
-                    output_path=self.output_dir / "pr_curves_comparison.png"
+                    output_path=self.output_dir / "pr_curves_comparison.png",
                 )
                 visualization_results["pr_plot"] = pr_plot
                 self.logger.info("Generated PR curves comparison plot")
@@ -278,19 +290,19 @@ class ModelVisualizationComponent(PipelineComponent):
                     thresholds_plot = plot_optimal_thresholds(
                         y_test,
                         y_prob_dict,
-                        output_path=self.output_dir / "optimal_thresholds_comparison.png"
+                        output_path=self.output_dir
+                        / "optimal_thresholds_comparison.png",
                     )
                     visualization_results["thresholds_plot"] = thresholds_plot
-                    self.logger.info(
-                        "Generated optimal thresholds comparison plot")
+                    self.logger.info("Generated optimal thresholds comparison plot")
                 except Exception as e:
-                    self.logger.error(
-                        f"Error plotting optimal thresholds: {e}")
+                    self.logger.error(f"Error plotting optimal thresholds: {e}")
             except Exception as e:
                 self.logger.error(f"Error plotting ROC/PR curves: {e}")
         else:
             self.logger.warning(
-                "Probability predictions not available for visualization")
+                "Probability predictions not available for visualization"
+            )
 
         # Plot threshold analysis for each model
         for model_name, model_threshold_results in threshold_results.items():
@@ -302,11 +314,10 @@ class ModelVisualizationComponent(PipelineComponent):
                 # Plot threshold analysis
                 threshold_plot = plot_threshold_analysis(
                     model_threshold_results,
-                    output_path=model_dir / "threshold_analysis.png"
+                    output_path=model_dir / "threshold_analysis.png",
                 )
                 visualization_results[f"{model_name}_threshold_plot"] = threshold_plot
-                self.logger.info(
-                    f"Generated threshold analysis plot for {model_name}")
+                self.logger.info(f"Generated threshold analysis plot for {model_name}")
 
                 # Plot confusion matrices at different thresholds
                 if y_test is not None and model_name in y_prob_dict:
@@ -314,14 +325,16 @@ class ModelVisualizationComponent(PipelineComponent):
                         y_test,
                         y_prob_dict[model_name],
                         thresholds=[0.3, 0.4, 0.5, 0.6, 0.7],
-                        output_path=model_dir / "confusion_matrices_at_thresholds.png"
+                        output_path=model_dir / "confusion_matrices_at_thresholds.png",
                     )
                     visualization_results[f"{model_name}_cm_plot"] = cm_plot
                     self.logger.info(
-                        f"Generated confusion matrices plot for {model_name}")
+                        f"Generated confusion matrices plot for {model_name}"
+                    )
             except Exception as e:
                 self.logger.error(
-                    f"Error plotting threshold analysis for {model_name}: {e}")
+                    f"Error plotting threshold analysis for {model_name}: {e}"
+                )
 
         # Create a new result dictionary with visualization results
         result = data.copy()
@@ -342,11 +355,11 @@ class VisualizationPipeline(PipelineComponent):
         numerical_columns: List[str] = NUMERICAL_FEATURES,
         service_columns: List[str] = None,
         target_column: str = TARGET,
-        output_dir: Union[str, Path] = VISUALIZATIONS_DIR
+        output_dir: Union[str, Path] = VISUALIZATIONS_DIR,
     ):
         """
         Initialize the visualization pipeline.
-        
+
         Args:
             run_eda: Whether to run EDA visualizations.
             categorical_columns: List of categorical column names.
@@ -366,7 +379,7 @@ class VisualizationPipeline(PipelineComponent):
                 numerical_columns=numerical_columns,
                 service_columns=service_columns,
                 target_column=target_column,
-                output_dir=output_dir
+                output_dir=output_dir,
             )
             self.components.append(self.eda)
 
@@ -377,10 +390,10 @@ class VisualizationPipeline(PipelineComponent):
     def run(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Run the complete visualization pipeline.
-        
+
         Args:
             data: Dictionary containing data from previous pipelines.
-            
+
         Returns:
             Dict: Dictionary with visualization results.
         """
@@ -396,5 +409,6 @@ class VisualizationPipeline(PipelineComponent):
         except Exception as e:
             self.logger.error(f"Error in visualization pipeline: {e}")
             import traceback
+
             self.logger.error(traceback.format_exc())
             return data

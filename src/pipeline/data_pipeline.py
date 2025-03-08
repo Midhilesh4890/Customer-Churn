@@ -15,7 +15,7 @@ from src.config import (
     NUMERICAL_FEATURES,
     TARGET,
     RANDOM_STATE,
-    TEST_SIZE
+    TEST_SIZE,
 )
 
 
@@ -25,7 +25,7 @@ class DataLoaderComponent(PipelineComponent):
     def __init__(self, data_path: Union[str, Path] = RAW_DATA_PATH):
         """
         Initialize the data loader component.
-        
+
         Args:
             data_path: Path to the raw data file.
         """
@@ -36,7 +36,7 @@ class DataLoaderComponent(PipelineComponent):
     def run(self, *args, **kwargs) -> pd.DataFrame:
         """
         Load the raw data from file.
-        
+
         Returns:
             pandas.DataFrame: The loaded raw data.
         """
@@ -55,10 +55,10 @@ class DataCleanerComponent(PipelineComponent):
     def run(self, data: pd.DataFrame) -> pd.DataFrame:
         """
         Clean the raw data.
-        
+
         Args:
             data: Raw dataframe to clean.
-            
+
         Returns:
             pandas.DataFrame: Cleaned dataframe.
         """
@@ -73,11 +73,11 @@ class DataSplitterComponent(PipelineComponent):
         self,
         target: str = "Churn_Binary",
         test_size: float = TEST_SIZE,
-        random_state: int = RANDOM_STATE
+        random_state: int = RANDOM_STATE,
     ):
         """
         Initialize the data splitter component.
-        
+
         Args:
             target: Target column name.
             test_size: Proportion of the dataset to include in the test split.
@@ -92,10 +92,10 @@ class DataSplitterComponent(PipelineComponent):
     def run(self, data: pd.DataFrame) -> Dict[str, Union[pd.DataFrame, pd.Series]]:
         """
         Split the data into training and testing sets.
-        
+
         Args:
             data: Dataframe to split.
-            
+
         Returns:
             Dict: Dictionary containing X_train, X_test, y_train, y_test.
         """
@@ -113,7 +113,7 @@ class DataSplitterComponent(PipelineComponent):
             "X_test": X_test,
             "y_train": y_train,
             "y_test": y_test,
-            "X_test_original": X_test.copy()  # Keep a copy of the original test set
+            "X_test_original": X_test.copy(),  # Keep a copy of the original test set
         }
 
 
@@ -125,11 +125,11 @@ class DataPreprocessorComponent(PipelineComponent):
         categorical_features: List[str] = CATEGORICAL_FEATURES,
         numerical_features: List[str] = NUMERICAL_FEATURES,
         save_output: bool = True,
-        output_dir: Union[str, Path] = PROCESSED_DATA_DIR
+        output_dir: Union[str, Path] = PROCESSED_DATA_DIR,
     ):
         """
         Initialize the data preprocessor component.
-        
+
         Args:
             categorical_features: List of categorical feature names.
             numerical_features: List of numerical feature names.
@@ -146,10 +146,10 @@ class DataPreprocessorComponent(PipelineComponent):
     def run(self, data: Dict[str, Union[pd.DataFrame, pd.Series]]) -> Dict[str, Any]:
         """
         Preprocess the data.
-        
+
         Args:
             data: Dictionary containing X_train, X_test, y_train, y_test.
-            
+
         Returns:
             Dict: Dictionary containing processed data and preprocessor.
         """
@@ -175,7 +175,7 @@ class DataPreprocessorComponent(PipelineComponent):
             "y_train": y_train,
             "y_test": y_test,
             "X_test_original": data["X_test_original"],
-            "preprocessor": preprocessor
+            "preprocessor": preprocessor,
         }
 
 
@@ -195,7 +195,7 @@ class DataPipeline(PipelineComponent):
     ):
         """
         Initialize the data pipeline.
-        
+
         Args:
             data_path: Path to the raw data file.
             target: Target column name.
@@ -218,7 +218,7 @@ class DataPipeline(PipelineComponent):
     def run(self, *args, **kwargs) -> Dict[str, Any]:
         """
         Run the complete data pipeline.
-        
+
         Returns:
             Dict: Dictionary containing processed data and preprocessor.
         """

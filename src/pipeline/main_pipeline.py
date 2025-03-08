@@ -18,7 +18,7 @@ from src.config import (
     VISUALIZATIONS_DIR,
     RESULTS_DIR,
     RANDOM_STATE,
-    TEST_SIZE
+    TEST_SIZE,
 )
 
 
@@ -30,11 +30,11 @@ def create_churn_pipeline(
     cv_folds: int = 5,
     run_threshold_opt: bool = True,
     save_models: bool = True,
-    save_output: bool = True
+    save_output: bool = True,
 ) -> Pipeline:
     """
     Create a complete churn prediction pipeline.
-    
+
     Args:
         data_path: Path to the raw data file.
         models_to_train: List of model types to train.
@@ -44,7 +44,7 @@ def create_churn_pipeline(
         run_threshold_opt: Whether to run threshold optimization.
         save_models: Whether to save trained models to disk.
         save_output: Whether to save processed data to disk.
-        
+
     Returns:
         Pipeline: The complete churn prediction pipeline.
     """
@@ -61,7 +61,7 @@ def create_churn_pipeline(
         test_size=TEST_SIZE,
         random_state=RANDOM_STATE,
         save_output=save_output,
-        output_dir=PROCESSED_DATA_DIR
+        output_dir=PROCESSED_DATA_DIR,
     )
     pipeline.add_component(data_pipeline)
 
@@ -70,7 +70,7 @@ def create_churn_pipeline(
         create_groups=True,
         create_counts=True,
         create_interactions=True,
-        categorical_columns=["Contract"]
+        categorical_columns=["Contract"],
     )
     pipeline.add_component(feature_pipeline)
 
@@ -79,7 +79,7 @@ def create_churn_pipeline(
         models_to_train=models_to_train,
         save_models=save_models,
         output_dir=MODELS_DIR,
-        segment_column="Contract"
+        segment_column="Contract",
     )
     pipeline.add_component(model_pipeline)
 
@@ -89,14 +89,13 @@ def create_churn_pipeline(
         n_splits=cv_folds,
         run_threshold_opt=run_threshold_opt,
         output_dir=RESULTS_DIR,
-        customer_id_column="customerID"
+        customer_id_column="customerID",
     )
     pipeline.add_component(evaluation_pipeline)
 
     # Create and add the visualization pipeline
     visualization_pipeline = VisualizationPipeline(
-        run_eda=run_eda,
-        output_dir=VISUALIZATIONS_DIR
+        run_eda=run_eda, output_dir=VISUALIZATIONS_DIR
     )
     pipeline.add_component(visualization_pipeline)
 
