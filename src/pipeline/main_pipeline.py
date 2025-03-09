@@ -1,6 +1,3 @@
-"""
-Main pipeline for the churn prediction project.
-"""
 from typing import Dict, List, Any, Union, Optional
 from pathlib import Path
 

@@ -1,6 +1,3 @@
-"""
-Data pipeline components for the churn prediction project.
-"""
 import pandas as pd
 from typing import Dict, List, Tuple, Any, Union, Optional
 from pathlib import Path

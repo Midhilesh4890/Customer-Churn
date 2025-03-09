@@ -1,6 +1,3 @@
-"""
-Base pipeline components for the churn prediction project.
-"""
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
 import pandas as pd

@@ -1,6 +1,3 @@
-"""
-Feature engineering module for the churn prediction project.
-"""
 import pandas as pd
 import numpy as np
 from typing import List, Tuple, Dict, Union

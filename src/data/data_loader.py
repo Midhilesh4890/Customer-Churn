@@ -1,6 +1,3 @@
-"""
-Data loader module for the churn prediction project.
-"""
 import pandas as pd
 from pathlib import Path
 from typing import Dict, Tuple, Union

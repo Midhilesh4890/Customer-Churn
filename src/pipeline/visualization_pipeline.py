@@ -1,6 +1,3 @@
-"""
-Visualization pipeline components for the churn prediction project.
-"""
 import pandas as pd
 from typing import Dict, List, Tuple, Any, Union, Optional
 from pathlib import Path
@@ -8,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from src.pipeline.base import PipelineComponent
 from src.visualization.eda_visualizer import generate_eda_visualizations
-from src.visualization.advanced_model_visualizer import (
+from src.visualization.model_visualizer import (
     plot_cv_results,
     plot_multiple_roc_curves,
     plot_multiple_pr_curves,

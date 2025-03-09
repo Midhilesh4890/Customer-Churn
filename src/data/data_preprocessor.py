@@ -1,6 +1,3 @@
-"""
-Data preprocessing module for the churn prediction project.
-"""
 import pandas as pd
 import numpy as np
 from typing import Dict, Tuple, List, Union
@@ -48,6 +45,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     cleaned_df.loc[null_mask, "TotalCharges"] = 0
 
     # Convert SeniorCitizen from 0/1 to No/Yes for consistency with other categorical features
+    # also boolean will save more space than the integer
     cleaned_df["SeniorCitizen"] = cleaned_df["SeniorCitizen"].map({0: "No", 1: "Yes"})
 
     # Convert Churn to binary (1/0)
@@ -112,6 +110,7 @@ def build_preprocessor(
     logger.info("Building data preprocessor")
 
     # Preprocessing for numerical features
+    # Pipeline is part of the Sklearn library
     numerical_transformer = Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="median")),

@@ -1,6 +1,3 @@
-"""
-Cross-validation module for the churn prediction project.
-"""
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple, Any, Union, Optional, Callable

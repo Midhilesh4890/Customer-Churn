@@ -1,6 +1,3 @@
-"""
-Model factory for the churn prediction project.
-"""
 import joblib
 import pandas as pd
 import numpy as np
